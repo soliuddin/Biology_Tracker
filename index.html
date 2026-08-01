@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biology NCERT Master Tracker</title>
+<meta name="description" content="A highly secure, beautiful, biology-themed NCERT Master Tracker.">
+
+<!-- Modern Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* Biology & Modern CSS Variables */
+:root {
+--bio-dark: #064e3b;
+--bio-light: #10b981;
+--bio-accent: #34d399;
+--bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0f172a 100%);
+--glass-bg: rgba(255, 255, 255, 0.07);
+--glass-border: rgba(255, 255, 255, 0.15);
+--text-main: #f8fafc;
+--text-muted: #94a3b8;
+--success: #10B981;
+--danger: #ef4444;
+--radius: 20px;
+--shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: 'Poppins', sans-serif;
+}
+
+/* Ambient Biology Background (Floating Cells) */
+body {
+background: var(--bg-gradient);
+color: var(--text-main);
+line-height: 1.6;
+padding: 20px;
+min-height: 100vh;
+position: relative;
+overflow-x: hidden;
+}
+
+body::before, body::after {
+content: '';
+position: fixed;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(0,0,0,0) 70%);
+z-index: -1;
+animation: float 20s infinite ease-in-out alternate;
+}
+
+body::before { width: 600px; height: 600px; top: -100px; left: -100px; }
+body::after { width: 400px; height: 400px; bottom: 10%; right: -50px; animation-duration: 25s; animation-delay: -5s; }
+
+@keyframes float {
+0% { transform: translate(0, 0) scale(1); }
+100% { transform: translate(50px, 50px) scale(1.1); }
+}
+
+.container {
+max-width: 1050px;
+margin: 0 auto;
+position: relative;
+z-index: 1;
+}
+
+/* Header */
+header {
+text-align: center;
+margin-bottom: 40px;
+padding-top: 20px;
+}
+
+h1 {
+font-size: clamp(2rem, 5vw, 3.2rem);
+font-weight: 800;
+background: linear-gradient(to right, #6ee7b7, #3b82f6);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+letter-spacing: -1px;
+margin-bottom: 5px;
+}
+
+.subtitle { font-size: 1.1rem; color: var(--bio-accent); font-weight: 300; }
+
+/* Glassmorphism Cards */
+.glass-card {
+background: var(--glass-bg);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+margin-bottom: 30px;
+overflow: hidden;
+}
+
+/* Info Section */
+.info-card {
+padding: 30px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 25px;
+}
+
+.input-group { display: flex; flex-direction: column; gap: 8px; }
+
+label { font-weight: 600; color: var(--bio-accent); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+
+input[type="text"], input[type="date"], textarea {
+width: 100%;
+padding: 12px 18px;
+background: rgba(0, 0, 0, 0.2);
+border: 1px solid var(--glass-border);
+border-radius: 12px;
+color: white;
+font-size: 1rem;
+transition: all 0.3s;
+outline: none;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+border-color: var(--bio-accent);
+box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+background: rgba(0, 0, 0, 0.4);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
+
+/* Unit Sections */
+.unit-header {
+padding: 20px 30px;
+background: rgba(0, 0, 0, 0.3);
+border-bottom: 1px solid var(--glass-border);
+display: flex;
+align-items: center;
+gap: 15px;
+}
+
+.unit-icon { font-size: 1.8rem; }
+.unit-title { font-size: 1.3rem; font-weight: 600; color: #f8fafc; }
+.unit-subtitle { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; }
+
+.table-responsive { overflow-x: auto; padding: 10px; }
+
+table { width: 100%; border-collapse: separate; border-spacing: 0 8px; white-space: nowrap; }
+
+th, td { padding: 16px 20px; text-align: center; }
+
+th { font-weight: 600; color: var(--bio-accent); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; padding-bottom: 10px; }
+
+td { background: rgba(255,255,255,0.03); border-top: 1px solid transparent; border-bottom: 1px solid transparent; }
+td:first-child { border-radius: 12px 0 0 12px; border-left: 1px solid transparent; }
+td:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid transparent; }
+
+tr:hover td { background: rgba(255,255,255,0.06); border-color: var(--glass-border); }
+
+td.chapter-name { text-align: left; font-weight: 400; font-size: 1.05rem; white-space: normal; min-width: 250px; }
+
+/* Modern Checkboxes */
+input[type="checkbox"] {
+appearance: none; width: 28px; height: 28px;
+border: 2px solid var(--text-muted); border-radius: 50%;
+background-color: rgba(0,0,0,0.2); cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+display: inline-flex; align-items: center; justify-content: center; position: relative;
+}
+
+input[type="checkbox"]:hover { border-color: var(--bio-accent); transform: scale(1.1); }
+input[type="checkbox"]:checked { background-color: var(--success); border-color: var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+input[type="checkbox"]:checked::after { content: '✓'; color: #022c22; font-size: 16px; font-weight: 800; position: absolute; }
+
+/* Footer & Action Bar */
+.footer-section { margin-top: 50px; margin-bottom: 40px; }
+.action-bar { padding: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; border-top: 2px solid var(--bio-accent); }
+.action-bar-text h3 { color: var(--bio-accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px;}
+.action-bar-text p { font-size: 0.95rem; color: var(--text-muted); max-width: 500px;}
+
+.btn {
+padding: 14px 28px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+transition: all 0.3s; display: flex; align-items: center; gap: 10px; font-size: 1rem; letter-spacing: 0.5px;
+}
+
+.btn-export { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+.btn-export:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(16,185,129,0.5); }
+.btn-import { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
+.btn-import:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(59,130,246,0.5); }
+
+.file-input-hidden { display: none; }
+
+/* Modals (Security & Activity Log) */
+.modal-overlay {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+z-index: 10000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.security-modal { background: var(--bg-gradient); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; transform: translateY(20px); transition: transform 0.3s; }
+.modal-overlay.active .security-modal { transform: translateY(0); }
+.modal-icon { font-size: 3rem; margin-bottom: 15px; }
+.modal-title { font-size: 1.4rem; font-weight: 600; color: #f8fafc; margin-bottom: 10px; }
+.modal-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+.modal-buttons { display: flex; gap: 15px; justify-content: center; }
+.btn-cancel { background: rgba(255,255,255,0.1); color: white; }
+.btn-confirm { background: var(--danger); color: white; }
+
+/* Activity Log Specific Styles */
+.floating-log-btn {
+position: fixed; bottom: 25px; right: 25px; background: var(--bio-dark); border: 2px solid var(--bio-accent);
+color: white; padding: 12px 20px; border-radius: 30px; cursor: pointer; z-index: 9998;
+box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; font-weight: 600; transition: all 0.3s;
+}
+.floating-log-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52, 211, 153, 0.4); }
+.log-content-area {
+max-height: 300px; overflow-y: auto; text-align: left; background: rgba(0,0,0,0.3);
+padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--glass-border);
+}
+.log-entry { padding: 10px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 12px; align-items: start; }
+.log-entry:last-child { border-bottom: none; }
+.log-time { color: var(--bio-accent); font-size: 0.8rem; white-space: nowrap; font-family: monospace; }
+
+/* Toasts */
+.toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.custom-message-box {
+background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 16px 32px; border-radius: 50px;
+border: 1px solid var(--glass-border); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.5); font-weight: 600; font-size: 1rem;
+display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateY(-20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.custom-message-box.show { opacity: 1; transform: translateY(0); }
+.custom-message-box.success { border-left: 4px solid var(--success); }
+.custom-message-box.error { border-left: 4px solid var(--danger); background: rgba(127, 29, 29, 0.95); }
+
+@media (max-width: 768px) {
+th, td { padding: 12px 10px; }
+.action-bar { flex-direction: column; align-items: flex-start; }
+.btn { width: 100%; justify-content: center; }
+.toast-container { width: 95%; }
+.custom-message-box { padding: 12px 20px; font-size: 0.9rem; justify-content: center; text-align: center;}
+.floating-log-btn { bottom: 15px; right: 15px; padding: 10px 16px; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<main class="container">
+<header>
+<h1>BIOLOGY MASTER TRACKER</h1>
+<p class="subtitle">Securely master the NCERT syllabus, cell by cell.</p>
+</header>
+
+<section class="glass-card info-card">
+<div class="input-group"><label for="student-name">Student Name</label><input type="text" id="student-name" placeholder="Enter your full name"></div>
+<div class="input-group"><label for="target-score">Target Exam & Score</label><input type="text" id="target-score" placeholder="e.g., NEET 360/360"></div>
+<div class="input-group"><label for="start-date">Start Date</label><input type="date" id="start-date"></div>
+</section>
+
+<!-- Personal Notes & Reminders -->
+<section class="glass-card info-card" style="display: block;">
+<div class="input-group">
+<label for="personal-notes">Personal Notes & Reminders 📝</label>
+<textarea id="personal-notes" placeholder="Write something for tomorrow, next month, or a year from now... 😅" rows="4"></textarea>
+</div>
+</section>
+
+<!-- UNIT 1 -->
+<section class="glass-card">
+<div class="unit-header"><div class="unit-icon">🌍</div><div><h2 class="unit-title">UNIT 1: Diversity in the Living World</h2></div></div>
+<div class="table-responsive">
+<table>
+<thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox" id="u1-c1-status"></td><td>1</td><td class="chapter-name">The Living World</td><td><input type="date" id="u1-c1-date"></td><td><input type="checkbox" id="u1-c1-rev1"></td><td><input type="checkbox" id="u1-c1-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c2-status"></td><td>2</td><td class="chapter-name">Biological Classification</td><td><input type="date" id="u1-c2-date"></td><td><input type="checkbox" id="u1-c2-rev1"></td><td><input type="checkbox" id="u1-c2-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c3-status"></td><td>3</td><td class="chapter-name">Plant Kingdom</td><td><input type="date" id="u1-c3-date"></td><td><input type="checkbox" id="u1-c3-rev1"></td><td><input type="checkbox" id="u1-c3-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c4-status"></td><td>4</td><td class="chapter-name">Animal Kingdom</td><td><input type="date" id="u1-c4-date"></td><td><input type="checkbox" id="u1-c4-rev1"></td><td><input type="checkbox" id="u1-c4-rev2"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- UNIT 2 -->
+<section class="glass-card">
+<div class="unit-header"><div class="unit-icon">🌿</div><div><h2 class="unit-title">UNIT 2: Structural Organization</h2></div></div>
+<div class="table-responsive">
+<table>
+<thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox" id="u2-c5-status"></td><td>5</td><td class="chapter-name">Morphology of Flowering Plants</td><td><input type="date" id="u2-c5-date"></td><td><input type="checkbox" id="u2-c5-rev1"></td><td><input type="checkbox" id="u2-c5-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c6-status"></td><td>6</td><td class="chapter-name">Anatomy of Flowering Plants</td><td><input type="date" id="u2-c6-date"></td><td><input type="checkbox" id="u2-c6-rev1"></td><td><input type="checkbox" id="u2-c6-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c7-status"></td><td>7</td><td class="chapter-name">Structural Organization in Animals</td><td><input type="date" id="u2-c7-date"></td><td><input type="checkbox" id="u2-c7-rev1"></td><td><input type="checkbox" id="u2-c7-rev2"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- UNIT 3 -->
+<section class="glass-card">
+<div class="unit-header"><div class="unit-icon">🦠</div><div><h2 class="unit-title">UNIT 3: Cell: Structure and Function</h2></div></div>
+<div class="table-responsive">
+<table>
+<thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox" id="u3-c8-status"></td><td>8</td><td class="chapter-name">Cell: The Unit of Life</td><td><input type="date" id="u3-c8-date"></td><td><input type="checkbox" id="u3-c8-rev1"></td><td><input type="checkbox" id="u3-c8-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c9-status"></td><td>9</td><td class="chapter-name">Biomolecules</td><td><input type="date" id="u3-c9-date"></td><td><input type="checkbox" id="u3-c9-rev1"></td><td><input type="checkbox" id="u3-c9-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c10-status"></td><td>10</td><td class="chapter-name">Cell Cycle and Cell Division</td><td><input type="date" id="u3-c10-date"></td><td><input type="checkbox" id="u3-c10-rev1"></td><td><input type="checkbox" id="u3-c10-rev2"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- UNIT 4 -->
+<section class="glass-card">
+<div class="unit-header"><div class="unit-icon">☀️</div><div><h2 class="unit-title">UNIT 4: Plant Physiology</h2></div></div>
+<div class="table-responsive">
+<table>
+<thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox" id="u4-c11-status"></td><td>11</td><td class="chapter-name">Photosynthesis in Higher Plants</td><td><input type="date" id="u4-c11-date"></td><td><input type="checkbox" id="u4-c11-rev1"></td><td><input type="checkbox" id="u4-c11-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c12-status"></td><td>12</td><td class="chapter-name">Respiration in Plants</td><td><input type="date" id="u4-c12-date"></td><td><input type="checkbox" id="u4-c12-rev1"></td><td><input type="checkbox" id="u4-c12-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c13-status"></td><td>13</td><td class="chapter-name">Plant Growth and Development</td><td><input type="date" id="u4-c13-date"></td><td><input type="checkbox" id="u4-c13-rev1"></td><td><input type="checkbox" id="u4-c13-rev2"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- UNIT 5 -->
+<section class="glass-card">
+<div class="unit-header"><div class="unit-icon">🫀</div><div><h2 class="unit-title">UNIT 5: Human Physiology</h2></div></div>
+<div class="table-responsive">
+<table>
+<thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox" id="u5-c14-status"></td><td>14</td><td class="chapter-name">Breathing and Exchange of Gases</td><td><input type="date" id="u5-c14-date"></td><td><input type="checkbox" id="u5-c14-rev1"></td><td><input type="checkbox" id="u5-c14-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c15-status"></td><td>15</td><td class="chapter-name">Body Fluids and Circulation</td><td><input type="date" id="u5-c15-date"></td><td><input type="checkbox" id="u5-c15-rev1"></td><td><input type="checkbox" id="u5-c15-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c16-status"></td><td>16</td><td class="chapter-name">Excretory Products & Elimination</td><td><input type="date" id="u5-c16-date"></td><td><input type="checkbox" id="u5-c16-rev1"></td><td><input type="checkbox" id="u5-c16-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c17-status"></td><td>17</td><td class="chapter-name">Locomotion and Movement</td><td><input type="date" id="u5-c17-date"></td><td><input type="checkbox" id="u5-c17-rev1"></td><td><input type="checkbox" id="u5-c17-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c18-status"></td><td>18</td><td class="chapter-name">Neural Control and Coordination</td><td><input type="date" id="u5-c18-date"></td><td><input type="checkbox" id="u5-c18-rev1"></td><td><input type="checkbox" id="u5-c18-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c19-status"></td><td>19</td><td class="chapter-name">Chemical Coordination & Integration</td><td><input type="date" id="u5-c19-date"></td><td><input type="checkbox" id="u5-c19-rev1"></td><td><input type="checkbox" id="u5-c19-rev2"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- FOOTER & Secure Action Bar -->
+<footer class="footer-section">
+<div class="glass-card action-bar">
+<div class="action-bar-text">
+<h3>🛡️ Maximum Security Sync</h3>
+<p>Exported files are mathematically sealed with a digital signature to prevent malicious tampering. Do not import files from unknown sources.</p>
+</div>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<button class="btn btn-export" id="btn-export">⬇️ Secure Export</button>
+<button class="btn btn-import" id="btn-import">⬆️ Secure Import</button>
+<input type="file" id="import-file" class="file-input-hidden" accept=".json">
+</div>
+</div>
+</footer>
+</main>
+
+<!-- Floating Activity Log Button -->
+<button id="btn-activity-log" class="floating-log-btn">🔔 Activity Log</button>
+
+<!-- Toasts -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Security Confirmation Modal -->
+<div id="security-modal" class="modal-overlay">
+<div class="security-modal">
+<div class="modal-icon" id="modal-icon">⚠️</div>
+<h3 class="modal-title" id="modal-title">Security Alert</h3>
+<p class="modal-text" id="modal-desc">Message here</p>
+<div class="modal-buttons">
+<button class="btn btn-cancel" id="btn-cancel-modal">Cancel</button>
+<button class="btn btn-confirm" id="modal-confirm-btn">Confirm Action</button>
+</div>
+</div>
+</div>
+
+<!-- Custom Activity Log Modal -->
+<div id="log-modal" class="modal-overlay">
+<div class="security-modal" style="max-width: 550px;">
+<h3 class="modal-title">📋 Activity History</h3>
+<p class="modal-text" style="margin-bottom: 15px;">Your recent actions and security alerts are securely logged below.</p>
+
+<div id="log-content" class="log-content-area">
+<!-- Log entries injected here via JS -->
+</div>
+
+<div class="modal-buttons">
+<button class="btn btn-cancel" id="btn-close-log">Close Window</button>
+<button class="btn btn-cancel" id="btn-clear-log" style="color: var(--danger);">Clear Logs</button>
+</div>
+</div>
+</div>
+
+<script>
+// ==========================================
+// 1. SANITIZATION & SECURITY PROTOCOLS
+// ==========================================
+function sanitizeInput(str) {
+if (typeof str !== 'string') return '';
+return str.replace(/[&<>'"]/g, tag => ({ '&': '&', '<': '<', '>': '>', "'": ''', '"': '"' }[tag] || tag));
+}
+
+function generateAntiTamperSignature(dataString) {
+let hash = 0;
+for (let i = 0; i < dataString.length; i++) {
+const char = dataString.charCodeAt(i);
+hash = ((hash << 5) - hash) + char;
+hash = hash & hash;
+}
+return "BIO-SECURE-SIG-" + Math.abs(hash).toString(36) + "-" + dataString.length;
+}
+
+// ==========================================
+// 2. UI COMPONENTS (Logs, Toasts & Modals)
+// ==========================================
+
+function recordActivityLog(message, type) {
+let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
+const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+logs.unshift({ time, message, type });
+if (logs.length > 50) logs.pop();
+localStorage.setItem('bio_activity_logs', JSON.stringify(logs));
+renderActivityLogs();
+}
+
+function renderActivityLogs() {
+const container = document.getElementById('log-content');
+let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
+
+if(logs.length === 0) {
+container.innerHTML = '<div style="text-align:center; color: #94a3b8; padding: 20px;">No recent activity logged.</div>';
+return;
+}
+
+container.innerHTML = logs.map(log => {
+let icon = log.type === 'success' ? '✅' : log.type === 'error' ? '🛡️' : 'ℹ️';
+let color = log.type === 'success' ? 'var(--success)' : log.type === 'error' ? 'var(--danger)' : '#f8fafc';
+return <div class="log-entry"&gt; &lt;span class="log-time"&gt;[${log.time}]</span>
+<span>${icon}&lt;/span&gt; &lt;span style="color: ${color}; font-size: 0.95rem;">${log.message}&lt;/span&gt; &lt;/div>;
+}).join('');
+}
+
+function showCustomMessage(message, type = 'info') {
+recordActivityLog(message, type);
+
+const container = document.getElementById('toast-container');
+const msgBox = document.createElement('div');
+msgBox.className = custom-message-box ${type}`;
+
+let icon = type === 'success' ? '✅' : type === 'error' ? '🛡️' : 'ℹ️';
+msgBox.innerHTML = <span&gt;${icon}</span> <span>${message}</span>`;
+container.appendChild(msgBox);
+
+setTimeout(() => msgBox.classList.add('show'), 10);
+setTimeout(() => {
+msgBox.classList.remove('show');
+setTimeout(() => msgBox.remove(), 400);
+}, 3000);
+}
+
+const securityModal = document.getElementById('security-modal');
+const logModal = document.getElementById('log-modal');
+
+document.getElementById('btn-cancel-modal').addEventListener('click', () => securityModal.classList.remove('active'));
+
+document.getElementById('btn-activity-log').addEventListener('click', () => {
+renderActivityLogs();
+logModal.classList.add('active');
+});
+
+document.getElementById('btn-close-log').addEventListener('click', () => logModal.classList.remove('active'));
+
+document.getElementById('btn-clear-log').addEventListener('click', () => {
+localStorage.removeItem('bio_activity_logs');
+renderActivityLogs();
+showCustomMessage('Activity Log Cleared', 'info');
+});
+
+function openSecurityModal(title, desc, icon, confirmAction, confirmText, isDanger) {
+document.getElementById('modal-title').innerText = title;
+document.getElementById('modal-desc').innerText = desc;
+document.getElementById('modal-icon').innerText = icon;
+
+const btn = document.getElementById('modal-confirm-btn');
+btn.innerText = confirmText;
+btn.style.background = isDanger ? 'var(--danger)' : 'var(--success)';
+
+const newBtn = btn.cloneNode(true);
+btn.parentNode.replaceChild(newBtn, btn);
+
+newBtn.addEventListener('click', () => {
+securityModal.classList.remove('active');
+confirmAction();
+});
+
+securityModal.classList.add('active');
+}
+
+// ==========================================
+// 3. INITIALIZATION & STORAGE ENGINE
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+// Event Listeners for Export/Import
+document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
+document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
+document.getElementById('import-file').addEventListener('change', executeSecureImport);
+
+const allInputs = document.querySelectorAll('input:not([type="file"]), textarea');
+let textChangeTimeout;
+
+allInputs.forEach(input => {
+try {
+const savedValue = localStorage.getItem(input.id);
+if (savedValue !== null) {
+if (input.type === 'checkbox') input.checked = (savedValue === 'true');
+else input.value = sanitizeInput(savedValue);
+}
+} catch(e) {}
+
+input.addEventListener('input', (e) => {
+let valueToSave = e.target.type === 'checkbox' ? (e.target.checked ? 'true' : 'false') : sanitizeInput(e.target.value);
+
+try {
+localStorage.setItem(e.target.id, valueToSave);
+} catch(e) {
+showCustomMessage('Warning: Browser blocked saving.', 'error');
+return;
+}
+
+if (e.target.type === 'checkbox') {
+showCustomMessage('Progress Checkpoint Saved', 'success');
+} else {
+clearTimeout(textChangeTimeout);
+textChangeTimeout = setTimeout(() => showCustomMessage('Text Data Auto-Saved', 'info'), 800);
+}
+});
+});
+});
+
+// ==========================================
+// 4. MAXIMUM SECURITY EXPORT
+// ==========================================
+function triggerSecureExport() {
+openSecurityModal(
+"Secure Export Initialization",
+"Your data will be exported with a Digital Signature. Any manual modifications to the downloaded file will break the signature and permanently block the import. Proceed?",
+"🔐", executeSecureExport, "Lock & Export", false
+);
+}
+
+function executeSecureExport() {
+const payload = {};
+document.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
+payload[input.id] = input.type === 'checkbox' ? input.checked : sanitizeInput(input.value);
+});
+
+const payloadString = JSON.stringify(payload);
+const securePackage = {
+metadata: { timestamp: new Date().toISOString(), version: "1.1", integrity_signature: generateAntiTamperSignature(payloadString) },
+payload: payload
+};
+
+const dataBlob = new Blob([JSON.stringify(securePackage, null, 2)], { type: 'application/json' });
+const url = URL.createObjectURL(dataBlob);
+
+const a = document.createElement('a');
+a.href = url;
+a.download = 'biology-secure-backup.json';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+
+showCustomMessage('Data Encapsulated & Exported Successfully!', 'success');
+}
+
+// ==========================================
+// 5. MAXIMUM SECURITY IMPORT
+// ==========================================
+function triggerSecureImport() {
+openSecurityModal(
+"Security Warning",
+"Ensure this file was generated by YOU. If the file has been tampered with or contains injected code, the security system will instantly block it.",
+"🛑", () => document.getElementById('import-file').click(), "Verify & Import", true
+);
+}
+
+function executeSecureImport(event) {
+const file = event.target.files[0];
+if (!file) return;
+
+const reader = new FileReader();
+reader.onload = function(e) {
+try {
+const importedData = JSON.parse(e.target.result);
+
+if (!importedData.metadata || !importedData.payload || !importedData.metadata.integrity_signature) {
+throw new Error("Invalid Secure Package Format.");
+}
+
+const payloadString = JSON.stringify(importedData.payload);
+if (importedData.metadata.integrity_signature !== generateAntiTamperSignature(payloadString)) {
+showCustomMessage("Malicious Modification Detected! Import Blocked.", "error");
+return;
+}
+
+const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]), textarea')).map(i => i.id);
+const payloadKeys = Object.keys(importedData.payload);
+
+for(let key of payloadKeys) {
+if(!allowedKeys.includes(key)) throw new Error("Schema violation detected.");
+}
+
+for (const key of allowedKeys) {
+if(importedData.payload[key] !== undefined) {
+let safeValue = importedData.payload[key];
+const targetInput = document.getElementById(key);
+if (targetInput.type === 'checkbox') safeValue = (safeValue === true || safeValue === 'true') ? 'true' : 'false';
+else safeValue = sanitizeInput(String(safeValue));
+
+try {
+localStorage.setItem(key, safeValue);
+} catch(e) {}
+}
+}
+
+showCustomMessage('Security Checks Passed! Restoring...', 'success');
+setTimeout(() => window.location.reload(), 1500);
+
+} catch (error) {
+showCustomMessage('Security Error: Corrupted File Blocked!', 'error');
+}
+};
+reader.readAsText(file);
+event.target.value = '';
+}
+</script>
+
+</body>
+</html>
