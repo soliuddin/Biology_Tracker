@@ -1,0 +1,31 @@
+name: PR Security & Integrity Checks
+
+on:
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  security-audit:
+    name: Code Security & Syntax Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. Check for accidentally committed secrets or tokens
+      - name: Secret Detection (TruffleHog)
+        uses: trufflesecurity/trufflehog-main@main
+        with:
+          extra_args: --only-verified
+
+      # 2. Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Validate HTML and inline JS code syntax
+      - name: Validate HTML & Inline Scripts
+        run: |
+          npx htmlhint index.html
