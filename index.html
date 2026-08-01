@@ -409,7 +409,7 @@ th, td { padding: 12px 10px; }
 // ==========================================
 function sanitizeInput(str) {
 if (typeof str !== 'string') return '';
-return str.replace(/[&<>'"]/g, tag => ({ '&': '&', '<': '<', '>': '>', "'": ''', '"': '"' }[tag] || tag));
+return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
 }
 
 function generateAntiTamperSignature(dataString) {
@@ -448,8 +448,12 @@ return;
 container.innerHTML = logs.map(log => {
 let icon = log.type === 'success' ? '✅' : log.type === 'error' ? '🛡️' : 'ℹ️';
 let color = log.type === 'success' ? 'var(--success)' : log.type === 'error' ? 'var(--danger)' : '#f8fafc';
-return <div class="log-entry"&gt; &lt;span class="log-time"&gt;[${log.time}]</span>
-<span>${icon}&lt;/span&gt; &lt;span style="color: ${color}; font-size: 0.95rem;">${log.message}&lt;/span&gt; &lt;/div>;
+return `
+<div class="log-entry">
+  <span class="log-time">[${log.time}]</span>
+  <span>${icon}</span>
+  <span style="color: ${color}; font-size: 0.95rem;">${log.message}</span>
+</div>`;
 }).join('');
 }
 
@@ -460,10 +464,10 @@ recordActivityLog(message, type);
 // Show the temporary Toast
 const container = document.getElementById('toast-container');
 const msgBox = document.createElement('div');
-msgBox.className = custom-message-box ${type}`;
+msgBox.className = `custom-message-box ${type}`;
 
 let icon = type === 'success' ? '✅' : type === 'error' ? '🛡️' : 'ℹ️';
-msgBox.innerHTML = <span&gt;${icon}</span> <span>${message}</span>`;
+msgBox.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
 container.appendChild(msgBox);
 
 setTimeout(() => msgBox.classList.add('show'), 10);
