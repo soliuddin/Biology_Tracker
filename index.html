@@ -6,7 +6,7 @@
 <title>Biology NCERT Master Tracker</title>
 <meta name="description" content="A highly secure, beautiful, biology-themed NCERT Master Tracker.">
 
-<!-- CSP: Optimized for Local File Execution while maintaining strict Anti-XSS Protection -->
+<!-- 🛡️ PROTOCOL 4: Content Security Policy (CSP Firewall) -->
 <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none';">
 
 <!-- Modern Typography -->
@@ -405,76 +405,83 @@ th, td { padding: 12px 10px; }
 
 <script>
 // ==========================================
-// 1. SANITIZATION & SECURITY PROTOCOLS
+// 🛡️ PROTOCOL 3: TOTAL XSS PROTECTION & SANITIZATION
 // ==========================================
 function sanitizeInput(str) {
-if (typeof str !== 'string') return '';
-return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+  if (typeof str !== 'string') return '';
+  return str.replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  }[tag] || tag));
 }
 
+// ==========================================
+// 🛡️ PROTOCOL 1: ANTI-TAMPER DIGITAL SIGNATURE
+// ==========================================
 function generateAntiTamperSignature(dataString) {
-let hash = 0;
-for (let i = 0; i < dataString.length; i++) {
-const char = dataString.charCodeAt(i);
-hash = ((hash << 5) - hash) + char;
-hash = hash & hash;
-}
-return "BIO-SECURE-SIG-" + Math.abs(hash).toString(36) + "-" + dataString.length;
+  let hash = 0;
+  for (let i = 0; i < dataString.length; i++) {
+    const char = dataString.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return "BIO-SECURE-SIG-" + Math.abs(hash).toString(36) + "-" + dataString.length;
 }
 
 // ==========================================
 // 2. UI COMPONENTS (Logs, Toasts & Modals)
 // ==========================================
 
-// Core Activity Log Engine
 function recordActivityLog(message, type) {
-let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
-const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-logs.unshift({ time, message, type }); // Add to start
-if (logs.length > 50) logs.pop(); // Keep only last 50 entries
-localStorage.setItem('bio_activity_logs', JSON.stringify(logs));
-renderActivityLogs(); // Update UI if modal is open
+  let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
+  const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+  logs.unshift({ time, message, type });
+  if (logs.length > 50) logs.pop();
+  localStorage.setItem('bio_activity_logs', JSON.stringify(logs));
+  renderActivityLogs();
 }
 
 function renderActivityLogs() {
-const container = document.getElementById('log-content');
-let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
+  const container = document.getElementById('log-content');
+  let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
 
-if(logs.length === 0) {
-container.innerHTML = '<div style="text-align:center; color: #94a3b8; padding: 20px;">No recent activity logged.</div>';
-return;
-}
+  if (logs.length === 0) {
+    container.innerHTML = '<div style="text-align:center; color: #94a3b8; padding: 20px;">No recent activity logged.</div>';
+    return;
+  }
 
-container.innerHTML = logs.map(log => {
-let icon = log.type === 'success' ? '✅' : log.type === 'error' ? '🛡️' : 'ℹ️';
-let color = log.type === 'success' ? 'var(--success)' : log.type === 'error' ? 'var(--danger)' : '#f8fafc';
-return `
-<div class="log-entry">
-  <span class="log-time">[${log.time}]</span>
-  <span>${icon}</span>
-  <span style="color: ${color}; font-size: 0.95rem;">${log.message}</span>
-</div>`;
-}).join('');
+  container.innerHTML = logs.map(log => {
+    let icon = log.type === 'success' ? '✅' : log.type === 'error' ? '🛡️' : 'ℹ️';
+    let color = log.type === 'success' ? 'var(--success)' : log.type === 'error' ? 'var(--danger)' : '#f8fafc';
+    return `
+      <div class="log-entry">
+        <span class="log-time">[${log.time}]</span>
+        <span>${icon}</span>
+        <span style="color: ${color}; font-size: 0.95rem;">${log.message}</span>
+      </div>
+    `;
+  }).join('');
 }
 
 function showCustomMessage(message, type = 'info') {
-// Automatically save every toast popup to the persistent Activity Log
-recordActivityLog(message, type);
+  recordActivityLog(message, type);
 
-// Show the temporary Toast
-const container = document.getElementById('toast-container');
-const msgBox = document.createElement('div');
-msgBox.className = `custom-message-box ${type}`;
+  const container = document.getElementById('toast-container');
+  const msgBox = document.createElement('div');
+  msgBox.className = `custom-message-box ${type}`;
 
-let icon = type === 'success' ? '✅' : type === 'error' ? '🛡️' : 'ℹ️';
-msgBox.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-container.appendChild(msgBox);
+  let icon = type === 'success' ? '✅' : type === 'error' ? '🛡️' : 'ℹ️';
+  msgBox.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+  container.appendChild(msgBox);
 
-setTimeout(() => msgBox.classList.add('show'), 10);
-setTimeout(() => {
-msgBox.classList.remove('show');
-setTimeout(() => msgBox.remove(), 400);
-}, 3000);
+  setTimeout(() => msgBox.classList.add('show'), 10);
+  setTimeout(() => {
+    msgBox.classList.remove('show');
+    setTimeout(() => msgBox.remove(), 400);
+  }, 3000);
 }
 
 // Modal Control Logic
@@ -484,171 +491,187 @@ const logModal = document.getElementById('log-modal');
 document.getElementById('btn-cancel-modal').addEventListener('click', () => securityModal.classList.remove('active'));
 
 document.getElementById('btn-activity-log').addEventListener('click', () => {
-renderActivityLogs();
-logModal.classList.add('active');
+  renderActivityLogs();
+  logModal.classList.add('active');
 });
 
 document.getElementById('btn-close-log').addEventListener('click', () => logModal.classList.remove('active'));
 
 document.getElementById('btn-clear-log').addEventListener('click', () => {
-localStorage.removeItem('bio_activity_logs');
-renderActivityLogs();
-showCustomMessage('Activity Log Cleared', 'info');
+  localStorage.removeItem('bio_activity_logs');
+  renderActivityLogs();
+  showCustomMessage('Activity Log Cleared', 'info');
 });
 
 function openSecurityModal(title, desc, icon, confirmAction, confirmText, isDanger) {
-document.getElementById('modal-title').innerText = title;
-document.getElementById('modal-desc').innerText = desc;
-document.getElementById('modal-icon').innerText = icon;
+  document.getElementById('modal-title').innerText = title;
+  document.getElementById('modal-desc').innerText = desc;
+  document.getElementById('modal-icon').innerText = icon;
 
-const btn = document.getElementById('modal-confirm-btn');
-btn.innerText = confirmText;
-btn.style.background = isDanger ? 'var(--danger)' : 'var(--success)';
+  const btn = document.getElementById('modal-confirm-btn');
+  btn.innerText = confirmText;
+  btn.style.background = isDanger ? 'var(--danger)' : 'var(--success)';
 
-const newBtn = btn.cloneNode(true);
-btn.parentNode.replaceChild(newBtn, btn);
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
 
-newBtn.addEventListener('click', () => {
-securityModal.classList.remove('active');
-confirmAction();
-});
+  newBtn.addEventListener('click', () => {
+    securityModal.classList.remove('active');
+    confirmAction();
+  });
 
-securityModal.classList.add('active');
+  securityModal.classList.add('active');
 }
 
 // ==========================================
-// 3. INITIALIZATION & STORAGE ENGINE
+// 🛡️ PROTOCOL 5: 100% OFFLINE PRIVACY SANDBOX
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-let storageAvailable = true;
-try { localStorage.getItem('test'); } catch(e) { storageAvailable = false; }
+  let storageAvailable = true;
+  try { localStorage.getItem('test'); } catch(e) { storageAvailable = false; }
 
-if(!storageAvailable) {
-setTimeout(() => showCustomMessage('Warning: LocalStorage blocked by browser. Auto-save disabled.', 'error'), 1000);
-return;
-}
+  if (!storageAvailable) {
+    setTimeout(() => showCustomMessage('Warning: LocalStorage blocked by browser. Auto-save disabled.', 'error'), 1000);
+    return;
+  }
 
-const allInputs = document.querySelectorAll('input:not([type="file"]), textarea');
-let textChangeTimeout;
+  const allInputs = document.querySelectorAll('input:not([type="file"]), textarea');
+  let textChangeTimeout;
 
-allInputs.forEach(input => {
-const savedValue = localStorage.getItem(input.id);
-if (savedValue !== null) {
-if (input.type === 'checkbox') input.checked = (savedValue === 'true');
-else input.value = sanitizeInput(savedValue);
-}
+  allInputs.forEach(input => {
+    const savedValue = localStorage.getItem(input.id);
+    if (savedValue !== null) {
+      if (input.type === 'checkbox') {
+        input.checked = (savedValue === 'true');
+      } else {
+        input.value = savedValue;
+      }
+    }
 
-input.addEventListener('input', (e) => {
-let valueToSave = e.target.type === 'checkbox' ? (e.target.checked ? 'true' : 'false') : sanitizeInput(e.target.value);
-localStorage.setItem(e.target.id, valueToSave);
+    input.addEventListener('input', (e) => {
+      let valueToSave = e.target.type === 'checkbox' ? (e.target.checked ? 'true' : 'false') : sanitizeInput(e.target.value);
+      localStorage.setItem(e.target.id, valueToSave);
 
-if (e.target.type === 'checkbox') {
-showCustomMessage('Progress Checkpoint Saved', 'success');
-} else {
-clearTimeout(textChangeTimeout);
-textChangeTimeout = setTimeout(() => showCustomMessage('Text Data Auto-Saved', 'info'), 800);
-}
-});
-});
+      if (e.target.type === 'checkbox') {
+        showCustomMessage('Progress Checkpoint Saved', 'success');
+      } else {
+        clearTimeout(textChangeTimeout);
+        textChangeTimeout = setTimeout(() => showCustomMessage('Text Data Auto-Saved', 'info'), 800);
+      }
+    });
+  });
 
-// Event Listeners for Export/Import
-document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
-document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
-document.getElementById('import-file').addEventListener('change', executeSecureImport);
+  // Event Listeners for Export/Import
+  document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
+  document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
+  document.getElementById('import-file').addEventListener('change', executeSecureImport);
 });
 
 // ==========================================
-// 4. MAXIMUM SECURITY EXPORT
+// SECURE EXPORT ENGINE
 // ==========================================
 function triggerSecureExport() {
-openSecurityModal(
-"Secure Export Initialization",
-"Your data will be exported with a Digital Signature. Any manual modifications to the downloaded file will break the signature and permanently block the import. Proceed?",
-"🔐", executeSecureExport, "Lock & Export", false
-);
+  openSecurityModal(
+    "Secure Export Initialization",
+    "Your data will be exported with a Digital Signature. Any manual modifications to the downloaded file will break the signature and permanently block the import. Proceed?",
+    "🔐", executeSecureExport, "Lock & Export", false
+  );
 }
 
 function executeSecureExport() {
-const payload = {};
-document.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
-payload[input.id] = input.type === 'checkbox' ? input.checked : sanitizeInput(input.value);
-});
+  const payload = {};
+  document.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
+    payload[input.id] = input.type === 'checkbox' ? input.checked : sanitizeInput(input.value);
+  });
 
-const payloadString = JSON.stringify(payload);
-const securePackage = {
-metadata: { timestamp: new Date().toISOString(), version: "1.1", integrity_signature: generateAntiTamperSignature(payloadString) },
-payload: payload
-};
+  const payloadString = JSON.stringify(payload);
+  const securePackage = {
+    metadata: { 
+      timestamp: new Date().toISOString(), 
+      version: "1.1", 
+      integrity_signature: generateAntiTamperSignature(payloadString) 
+    },
+    payload: payload
+  };
 
-const dataBlob = new Blob([JSON.stringify(securePackage, null, 2)], { type: 'application/json' });
-const url = URL.createObjectURL(dataBlob);
+  const dataBlob = new Blob([JSON.stringify(securePackage, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
 
-const a = document.createElement('a');
-a.href = url;
-a.download = 'biology-secure-backup.json';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'biology-secure-backup.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 
-showCustomMessage('Data Encapsulated & Exported Successfully!', 'success');
+  showCustomMessage('Data Encapsulated & Exported Successfully!', 'success');
 }
 
 // ==========================================
-// 5. MAXIMUM SECURITY IMPORT
+// 🛡️ PROTOCOL 2: STRICT SCHEMA VALIDATION & VERIFICATION
 // ==========================================
 function triggerSecureImport() {
-openSecurityModal(
-"Security Warning",
-"Ensure this file was generated by YOU. If the file has been tampered with or contains injected code, the security system will instantly block it.",
-"🛑", () => document.getElementById('import-file').click(), "Verify & Import", true
-);
+  openSecurityModal(
+    "Security Warning",
+    "Ensure this file was generated by YOU. If the file has been tampered with or contains injected code, the security system will instantly block it.",
+    "🛑", () => document.getElementById('import-file').click(), "Verify & Import", true
+  );
 }
 
 function executeSecureImport(event) {
-const file = event.target.files[0];
-if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-const reader = new FileReader();
-reader.onload = function(e) {
-try {
-const importedData = JSON.parse(e.target.result);
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
 
-if (!importedData.metadata || !importedData.payload || !importedData.metadata.integrity_signature) {
-throw new Error("Invalid Secure Package Format.");
-}
+      // 1. Structure Verification
+      if (!importedData.metadata || !importedData.payload || !importedData.metadata.integrity_signature) {
+        throw new Error("Invalid Secure Package Format.");
+      }
 
-const payloadString = JSON.stringify(importedData.payload);
-if (importedData.metadata.integrity_signature !== generateAntiTamperSignature(payloadString)) {
-showCustomMessage("Malicious Modification Detected! Import Blocked.", "error");
-return;
-}
+      // 2. Anti-Tamper Signature Check
+      const payloadString = JSON.stringify(importedData.payload);
+      if (importedData.metadata.integrity_signature !== generateAntiTamperSignature(payloadString)) {
+        showCustomMessage("Malicious Modification Detected! Import Blocked.", "error");
+        return;
+      }
 
-const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]), textarea')).map(i => i.id);
-const payloadKeys = Object.keys(importedData.payload);
+      // 3. Strict Whitelist Schema Validation
+      const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]), textarea')).map(i => i.id);
+      const payloadKeys = Object.keys(importedData.payload);
 
-for(let key of payloadKeys) {
-if(!allowedKeys.includes(key)) throw new Error("Schema violation detected.");
-}
+      for (let key of payloadKeys) {
+        if (!allowedKeys.includes(key)) {
+          throw new Error("Schema violation detected: Unauthorized key.");
+        }
+      }
 
-for (const key of allowedKeys) {
-if(importedData.payload[key] !== undefined) {
-let safeValue = importedData.payload[key];
-const targetInput = document.getElementById(key);
-if (targetInput.type === 'checkbox') safeValue = (safeValue === true || safeValue === 'true') ? 'true' : 'false';
-else safeValue = sanitizeInput(String(safeValue));
-localStorage.setItem(key, safeValue);
-}
-}
+      // 4. Safe Insertion to LocalStorage
+      for (const key of allowedKeys) {
+        if (importedData.payload[key] !== undefined) {
+          let safeValue = importedData.payload[key];
+          const targetInput = document.getElementById(key);
+          if (targetInput.type === 'checkbox') {
+            safeValue = (safeValue === true || safeValue === 'true') ? 'true' : 'false';
+          } else {
+            safeValue = sanitizeInput(String(safeValue));
+          }
+          localStorage.setItem(key, safeValue);
+        }
+      }
 
-showCustomMessage('Security Checks Passed! Restoring...', 'success');
-setTimeout(() => window.location.reload(), 1500);
+      showCustomMessage('Security Checks Passed! Restoring...', 'success');
+      setTimeout(() => window.location.reload(), 1500);
 
-} catch (error) {
-showCustomMessage('Security Error: Corrupted File Blocked!', 'error');
-}
-};
-reader.readAsText(file);
-event.target.value = '';
+    } catch (error) {
+      showCustomMessage('Security Error: Corrupted or Malicious File Blocked!', 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 </script>
 
