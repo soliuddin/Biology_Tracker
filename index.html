@@ -116,7 +116,7 @@ gap: 25px;
 
 label { font-weight: 600; color: var(--bio-accent); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
 
-input[type="text"], input.date-mask, textarea {
+input[type="text"], textarea {
 width: 100%;
 padding: 12px 18px;
 background: rgba(0, 0, 0, 0.2);
@@ -128,13 +128,50 @@ transition: all 0.3s;
 outline: none;
 }
 
-input[type="text"]:focus, input.date-mask:focus, textarea:focus {
+input[type="text"]:focus, textarea:focus {
 border-color: var(--bio-accent);
 box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
 background: rgba(0, 0, 0, 0.4);
 }
 
 textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
+
+/* Hybrid Date Control (Manual Typing + Calendar Picker) */
+.hybrid-date-wrapper {
+position: relative;
+display: flex;
+align-items: center;
+width: 100%;
+min-width: 170px;
+}
+
+.hybrid-date-wrapper input[type="text"] {
+padding-right: 42px;
+}
+
+.native-calendar-btn {
+position: absolute;
+right: 8px;
+width: 28px;
+height: 28px;
+opacity: 0;
+cursor: pointer;
+z-index: 2;
+}
+
+.calendar-icon-overlay {
+position: absolute;
+right: 12px;
+pointer-events: none;
+font-size: 1.1rem;
+z-index: 1;
+filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+transition: transform 0.2s;
+}
+
+.hybrid-date-wrapper:hover .calendar-icon-overlay {
+transform: scale(1.15);
+}
 
 /* Unit Sections */
 .unit-header {
@@ -148,7 +185,6 @@ gap: 15px;
 
 .unit-icon { font-size: 1.8rem; }
 .unit-title { font-size: 1.3rem; font-weight: 600; color: #f8fafc; }
-.unit-subtitle { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; }
 
 .table-responsive { overflow-x: auto; padding: 10px; }
 
@@ -259,7 +295,14 @@ th, td { padding: 12px 10px; }
 <section class="glass-card info-card">
 <div class="input-group"><label for="student-name">Student Name</label><input type="text" id="student-name" placeholder="Enter your full name"></div>
 <div class="input-group"><label for="target-score">Target Exam & Score</label><input type="text" id="target-score" placeholder="e.g., NEET 360/360"></div>
-<div class="input-group"><label for="start-date">Start Date</label><input type="text" class="date-mask" id="start-date" placeholder="DD/MM/YYYY" maxlength="10"></div>
+<div class="input-group">
+  <label for="start-date">Start Date</label>
+  <div class="hybrid-date-wrapper">
+    <input type="text" class="date-mask" id="start-date" placeholder="DD/MM/YYYY" maxlength="10">
+    <input type="date" class="native-calendar-btn" id="start-date-picker" title="Select date from calendar">
+    <span class="calendar-icon-overlay">📅</span>
+  </div>
+</div>
 </section>
 
 <!-- Personal Notes & Reminders -->
@@ -277,10 +320,10 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u1-c1-status"></td><td>1</td><td class="chapter-name">The Living World</td><td><input type="text" class="date-mask" id="u1-c1-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c1-rev1"></td><td><input type="checkbox" id="u1-c1-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c2-status"></td><td>2</td><td class="chapter-name">Biological Classification</td><td><input type="text" class="date-mask" id="u1-c2-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c2-rev1"></td><td><input type="checkbox" id="u1-c2-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c3-status"></td><td>3</td><td class="chapter-name">Plant Kingdom</td><td><input type="text" class="date-mask" id="u1-c3-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c3-rev1"></td><td><input type="checkbox" id="u1-c3-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c4-status"></td><td>4</td><td class="chapter-name">Animal Kingdom</td><td><input type="text" class="date-mask" id="u1-c4-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c4-rev1"></td><td><input type="checkbox" id="u1-c4-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c1-status"></td><td>1</td><td class="chapter-name">The Living World</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u1-c1-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u1-c1-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u1-c1-rev1"></td><td><input type="checkbox" id="u1-c1-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c2-status"></td><td>2</td><td class="chapter-name">Biological Classification</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u1-c2-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u1-c2-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u1-c2-rev1"></td><td><input type="checkbox" id="u1-c2-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c3-status"></td><td>3</td><td class="chapter-name">Plant Kingdom</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u1-c3-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u1-c3-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u1-c3-rev1"></td><td><input type="checkbox" id="u1-c3-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c4-status"></td><td>4</td><td class="chapter-name">Animal Kingdom</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u1-c4-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u1-c4-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u1-c4-rev1"></td><td><input type="checkbox" id="u1-c4-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -293,9 +336,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u2-c5-status"></td><td>5</td><td class="chapter-name">Morphology of Flowering Plants</td><td><input type="text" class="date-mask" id="u2-c5-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c5-rev1"></td><td><input type="checkbox" id="u2-c5-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u2-c6-status"></td><td>6</td><td class="chapter-name">Anatomy of Flowering Plants</td><td><input type="text" class="date-mask" id="u2-c6-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c6-rev1"></td><td><input type="checkbox" id="u2-c6-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u2-c7-status"></td><td>7</td><td class="chapter-name">Structural Organization in Animals</td><td><input type="text" class="date-mask" id="u2-c7-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c7-rev1"></td><td><input type="checkbox" id="u2-c7-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c5-status"></td><td>5</td><td class="chapter-name">Morphology of Flowering Plants</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u2-c5-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u2-c5-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u2-c5-rev1"></td><td><input type="checkbox" id="u2-c5-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c6-status"></td><td>6</td><td class="chapter-name">Anatomy of Flowering Plants</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u2-c6-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u2-c6-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u2-c6-rev1"></td><td><input type="checkbox" id="u2-c6-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c7-status"></td><td>7</td><td class="chapter-name">Structural Organization in Animals</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u2-c7-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u2-c7-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u2-c7-rev1"></td><td><input type="checkbox" id="u2-c7-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -308,9 +351,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u3-c8-status"></td><td>8</td><td class="chapter-name">Cell: The Unit of Life</td><td><input type="text" class="date-mask" id="u3-c8-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c8-rev1"></td><td><input type="checkbox" id="u3-c8-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u3-c9-status"></td><td>9</td><td class="chapter-name">Biomolecules</td><td><input type="text" class="date-mask" id="u3-c9-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c9-rev1"></td><td><input type="checkbox" id="u3-c9-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u3-c10-status"></td><td>10</td><td class="chapter-name">Cell Cycle and Cell Division</td><td><input type="text" class="date-mask" id="u3-c10-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c10-rev1"></td><td><input type="checkbox" id="u3-c10-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c8-status"></td><td>8</td><td class="chapter-name">Cell: The Unit of Life</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u3-c8-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u3-c8-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u3-c8-rev1"></td><td><input type="checkbox" id="u3-c8-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c9-status"></td><td>9</td><td class="chapter-name">Biomolecules</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u3-c9-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u3-c9-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u3-c9-rev1"></td><td><input type="checkbox" id="u3-c9-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c10-status"></td><td>10</td><td class="chapter-name">Cell Cycle and Cell Division</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u3-c10-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u3-c10-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u3-c10-rev1"></td><td><input type="checkbox" id="u3-c10-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -323,9 +366,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u4-c11-status"></td><td>11</td><td class="chapter-name">Photosynthesis in Higher Plants</td><td><input type="text" class="date-mask" id="u4-c11-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c11-rev1"></td><td><input type="checkbox" id="u4-c11-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u4-c12-status"></td><td>12</td><td class="chapter-name">Respiration in Plants</td><td><input type="text" class="date-mask" id="u4-c12-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c12-rev1"></td><td><input type="checkbox" id="u4-c12-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u4-c13-status"></td><td>13</td><td class="chapter-name">Plant Growth and Development</td><td><input type="text" class="date-mask" id="u4-c13-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c13-rev1"></td><td><input type="checkbox" id="u4-c13-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c11-status"></td><td>11</td><td class="chapter-name">Photosynthesis in Higher Plants</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u4-c11-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u4-c11-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u4-c11-rev1"></td><td><input type="checkbox" id="u4-c11-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c12-status"></td><td>12</td><td class="chapter-name">Respiration in Plants</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u4-c12-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u4-c12-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u4-c12-rev1"></td><td><input type="checkbox" id="u4-c12-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c13-status"></td><td>13</td><td class="chapter-name">Plant Growth and Development</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u4-c13-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u4-c13-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u4-c13-rev1"></td><td><input type="checkbox" id="u4-c13-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -338,12 +381,12 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u5-c14-status"></td><td>14</td><td class="chapter-name">Breathing and Exchange of Gases</td><td><input type="text" class="date-mask" id="u5-c14-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c14-rev1"></td><td><input type="checkbox" id="u5-c14-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c15-status"></td><td>15</td><td class="chapter-name">Body Fluids and Circulation</td><td><input type="text" class="date-mask" id="u5-c15-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c15-rev1"></td><td><input type="checkbox" id="u5-c15-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c16-status"></td><td>16</td><td class="chapter-name">Excretory Products & Elimination</td><td><input type="text" class="date-mask" id="u5-c16-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c16-rev1"></td><td><input type="checkbox" id="u5-c16-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c17-status"></td><td>17</td><td class="chapter-name">Locomotion and Movement</td><td><input type="text" class="date-mask" id="u5-c17-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c17-rev1"></td><td><input type="checkbox" id="u5-c17-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c18-status"></td><td>18</td><td class="chapter-name">Neural Control and Coordination</td><td><input type="text" class="date-mask" id="u5-c18-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c18-rev1"></td><td><input type="checkbox" id="u5-c18-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c19-status"></td><td>19</td><td class="chapter-name">Chemical Coordination & Integration</td><td><input type="text" class="date-mask" id="u5-c19-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c19-rev1"></td><td><input type="checkbox" id="u5-c19-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c14-status"></td><td>14</td><td class="chapter-name">Breathing and Exchange of Gases</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c14-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c14-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c14-rev1"></td><td><input type="checkbox" id="u5-c14-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c15-status"></td><td>15</td><td class="chapter-name">Body Fluids and Circulation</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c15-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c15-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c15-rev1"></td><td><input type="checkbox" id="u5-c15-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c16-status"></td><td>16</td><td class="chapter-name">Excretory Products & Elimination</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c16-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c16-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c16-rev1"></td><td><input type="checkbox" id="u5-c16-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c17-status"></td><td>17</td><td class="chapter-name">Locomotion and Movement</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c17-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c17-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c17-rev1"></td><td><input type="checkbox" id="u5-c17-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c18-status"></td><td>18</td><td class="chapter-name">Neural Control and Coordination</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c18-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c18-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c18-rev1"></td><td><input type="checkbox" id="u5-c18-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c19-status"></td><td>19</td><td class="chapter-name">Chemical Coordination & Integration</td><td><div class="hybrid-date-wrapper"><input type="text" class="date-mask" id="u5-c19-date" placeholder="DD/MM/YYYY" maxlength="10"><input type="date" class="native-calendar-btn" id="u5-c19-date-picker"><span class="calendar-icon-overlay">📅</span></div></td><td><input type="checkbox" id="u5-c19-rev1"></td><td><input type="checkbox" id="u5-c19-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -417,11 +460,17 @@ function sanitizeInput(str) {
 }
 
 // ==========================================
-// 🗓️ AUTOMATIC DD/MM/YYYY FORMAT MASK
+// 🗓️ HYBRID DATE SYSTEM (Manual Type Mask + Calendar Integration)
 // ==========================================
 function setupDateMasks() {
-  document.querySelectorAll('.date-mask').forEach(input => {
-    input.addEventListener('input', (e) => {
+  document.querySelectorAll('.hybrid-date-wrapper').forEach(wrapper => {
+    const textInput = wrapper.querySelector('input.date-mask');
+    const pickerInput = wrapper.querySelector('input.native-calendar-btn');
+
+    if (!textInput || !pickerInput) return;
+
+    // 1. Manual Typing Mask (DD/MM/YYYY)
+    textInput.addEventListener('input', (e) => {
       let v = e.target.value.replace(/\D/g, '');
       if (v.length > 8) v = v.substring(0, 8);
       if (v.length >= 5) {
@@ -430,6 +479,28 @@ function setupDateMasks() {
         e.target.value = `${v.substring(0, 2)}/${v.substring(2)}`;
       } else {
         e.target.value = v;
+      }
+
+      // Sync typing with native date picker if valid
+      if (e.target.value.length === 10) {
+        const parts = e.target.value.split('/');
+        const day = parts[0];
+        const month = parts[1];
+        const year = parts[2];
+        if (day <= 31 && month <= 12 && year.length === 4) {
+          pickerInput.value = `${year}-${month}-${day}`;
+        }
+      }
+    });
+
+    // 2. Calendar Picker Sync (YYYY-MM-DD -> DD/MM/YYYY)
+    pickerInput.addEventListener('change', (e) => {
+      if (!e.target.value) return;
+      const parts = e.target.value.split('-'); // ISO: YYYY-MM-DD
+      if (parts.length === 3) {
+        textInput.value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        // Trigger manual input event to initiate LocalStorage auto-save
+        textInput.dispatchEvent(new Event('input', { bubbles: true }));
       }
     });
   });
@@ -554,7 +625,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const allInputs = document.querySelectorAll('input:not([type="file"]), textarea');
+  // Filter out internal calendar triggers from LocalStorage binding
+  const allInputs = document.querySelectorAll('input:not([type="file"]):not(.native-calendar-btn), textarea');
   let textChangeTimeout;
 
   allInputs.forEach(input => {
@@ -564,6 +636,14 @@ document.addEventListener('DOMContentLoaded', () => {
         input.checked = (savedValue === 'true');
       } else {
         input.value = savedValue;
+        // Sync date values to calendar pickers on initial load
+        if (input.classList.contains('date-mask') && savedValue.length === 10) {
+          const picker = input.parentElement.querySelector('.native-calendar-btn');
+          if (picker) {
+            const parts = savedValue.split('/');
+            if (parts.length === 3) picker.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+          }
+        }
       }
     }
 
@@ -599,7 +679,7 @@ function triggerSecureExport() {
 
 function executeSecureExport() {
   const payload = {};
-  document.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
+  document.querySelectorAll('input:not([type="file"]):not(.native-calendar-btn), textarea').forEach(input => {
     payload[input.id] = input.type === 'checkbox' ? input.checked : sanitizeInput(input.value);
   });
 
@@ -659,7 +739,7 @@ function executeSecureImport(event) {
       }
 
       // 3. Strict Whitelist Schema Validation
-      const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]), textarea')).map(i => i.id);
+      const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]):not(.native-calendar-btn), textarea')).map(i => i.id);
       const payloadKeys = Object.keys(importedData.payload);
 
       for (let key of payloadKeys) {
