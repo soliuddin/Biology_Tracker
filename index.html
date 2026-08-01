@@ -116,7 +116,7 @@ gap: 25px;
 
 label { font-weight: 600; color: var(--bio-accent); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
 
-input[type="text"], input[type="date"], textarea {
+input[type="text"], input.date-mask, textarea {
 width: 100%;
 padding: 12px 18px;
 background: rgba(0, 0, 0, 0.2);
@@ -128,13 +128,11 @@ transition: all 0.3s;
 outline: none;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+input[type="text"]:focus, input.date-mask:focus, textarea:focus {
 border-color: var(--bio-accent);
 box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
 background: rgba(0, 0, 0, 0.4);
 }
-
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
 textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
 
@@ -261,7 +259,7 @@ th, td { padding: 12px 10px; }
 <section class="glass-card info-card">
 <div class="input-group"><label for="student-name">Student Name</label><input type="text" id="student-name" placeholder="Enter your full name"></div>
 <div class="input-group"><label for="target-score">Target Exam & Score</label><input type="text" id="target-score" placeholder="e.g., NEET 360/360"></div>
-<div class="input-group"><label for="start-date">Start Date</label><input type="date" id="start-date"></div>
+<div class="input-group"><label for="start-date">Start Date</label><input type="text" class="date-mask" id="start-date" placeholder="DD/MM/YYYY" maxlength="10"></div>
 </section>
 
 <!-- Personal Notes & Reminders -->
@@ -279,10 +277,10 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u1-c1-status"></td><td>1</td><td class="chapter-name">The Living World</td><td><input type="date" id="u1-c1-date"></td><td><input type="checkbox" id="u1-c1-rev1"></td><td><input type="checkbox" id="u1-c1-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c2-status"></td><td>2</td><td class="chapter-name">Biological Classification</td><td><input type="date" id="u1-c2-date"></td><td><input type="checkbox" id="u1-c2-rev1"></td><td><input type="checkbox" id="u1-c2-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c3-status"></td><td>3</td><td class="chapter-name">Plant Kingdom</td><td><input type="date" id="u1-c3-date"></td><td><input type="checkbox" id="u1-c3-rev1"></td><td><input type="checkbox" id="u1-c3-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u1-c4-status"></td><td>4</td><td class="chapter-name">Animal Kingdom</td><td><input type="date" id="u1-c4-date"></td><td><input type="checkbox" id="u1-c4-rev1"></td><td><input type="checkbox" id="u1-c4-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c1-status"></td><td>1</td><td class="chapter-name">The Living World</td><td><input type="text" class="date-mask" id="u1-c1-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c1-rev1"></td><td><input type="checkbox" id="u1-c1-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c2-status"></td><td>2</td><td class="chapter-name">Biological Classification</td><td><input type="text" class="date-mask" id="u1-c2-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c2-rev1"></td><td><input type="checkbox" id="u1-c2-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c3-status"></td><td>3</td><td class="chapter-name">Plant Kingdom</td><td><input type="text" class="date-mask" id="u1-c3-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c3-rev1"></td><td><input type="checkbox" id="u1-c3-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u1-c4-status"></td><td>4</td><td class="chapter-name">Animal Kingdom</td><td><input type="text" class="date-mask" id="u1-c4-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u1-c4-rev1"></td><td><input type="checkbox" id="u1-c4-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -295,9 +293,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u2-c5-status"></td><td>5</td><td class="chapter-name">Morphology of Flowering Plants</td><td><input type="date" id="u2-c5-date"></td><td><input type="checkbox" id="u2-c5-rev1"></td><td><input type="checkbox" id="u2-c5-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u2-c6-status"></td><td>6</td><td class="chapter-name">Anatomy of Flowering Plants</td><td><input type="date" id="u2-c6-date"></td><td><input type="checkbox" id="u2-c6-rev1"></td><td><input type="checkbox" id="u2-c6-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u2-c7-status"></td><td>7</td><td class="chapter-name">Structural Organization in Animals</td><td><input type="date" id="u2-c7-date"></td><td><input type="checkbox" id="u2-c7-rev1"></td><td><input type="checkbox" id="u2-c7-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c5-status"></td><td>5</td><td class="chapter-name">Morphology of Flowering Plants</td><td><input type="text" class="date-mask" id="u2-c5-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c5-rev1"></td><td><input type="checkbox" id="u2-c5-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c6-status"></td><td>6</td><td class="chapter-name">Anatomy of Flowering Plants</td><td><input type="text" class="date-mask" id="u2-c6-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c6-rev1"></td><td><input type="checkbox" id="u2-c6-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u2-c7-status"></td><td>7</td><td class="chapter-name">Structural Organization in Animals</td><td><input type="text" class="date-mask" id="u2-c7-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u2-c7-rev1"></td><td><input type="checkbox" id="u2-c7-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -310,9 +308,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u3-c8-status"></td><td>8</td><td class="chapter-name">Cell: The Unit of Life</td><td><input type="date" id="u3-c8-date"></td><td><input type="checkbox" id="u3-c8-rev1"></td><td><input type="checkbox" id="u3-c8-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u3-c9-status"></td><td>9</td><td class="chapter-name">Biomolecules</td><td><input type="date" id="u3-c9-date"></td><td><input type="checkbox" id="u3-c9-rev1"></td><td><input type="checkbox" id="u3-c9-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u3-c10-status"></td><td>10</td><td class="chapter-name">Cell Cycle and Cell Division</td><td><input type="date" id="u3-c10-date"></td><td><input type="checkbox" id="u3-c10-rev1"></td><td><input type="checkbox" id="u3-c10-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c8-status"></td><td>8</td><td class="chapter-name">Cell: The Unit of Life</td><td><input type="text" class="date-mask" id="u3-c8-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c8-rev1"></td><td><input type="checkbox" id="u3-c8-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c9-status"></td><td>9</td><td class="chapter-name">Biomolecules</td><td><input type="text" class="date-mask" id="u3-c9-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c9-rev1"></td><td><input type="checkbox" id="u3-c9-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u3-c10-status"></td><td>10</td><td class="chapter-name">Cell Cycle and Cell Division</td><td><input type="text" class="date-mask" id="u3-c10-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u3-c10-rev1"></td><td><input type="checkbox" id="u3-c10-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -325,9 +323,9 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u4-c11-status"></td><td>11</td><td class="chapter-name">Photosynthesis in Higher Plants</td><td><input type="date" id="u4-c11-date"></td><td><input type="checkbox" id="u4-c11-rev1"></td><td><input type="checkbox" id="u4-c11-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u4-c12-status"></td><td>12</td><td class="chapter-name">Respiration in Plants</td><td><input type="date" id="u4-c12-date"></td><td><input type="checkbox" id="u4-c12-rev1"></td><td><input type="checkbox" id="u4-c12-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u4-c13-status"></td><td>13</td><td class="chapter-name">Plant Growth and Development</td><td><input type="date" id="u4-c13-date"></td><td><input type="checkbox" id="u4-c13-rev1"></td><td><input type="checkbox" id="u4-c13-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c11-status"></td><td>11</td><td class="chapter-name">Photosynthesis in Higher Plants</td><td><input type="text" class="date-mask" id="u4-c11-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c11-rev1"></td><td><input type="checkbox" id="u4-c11-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c12-status"></td><td>12</td><td class="chapter-name">Respiration in Plants</td><td><input type="text" class="date-mask" id="u4-c12-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c12-rev1"></td><td><input type="checkbox" id="u4-c12-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u4-c13-status"></td><td>13</td><td class="chapter-name">Plant Growth and Development</td><td><input type="text" class="date-mask" id="u4-c13-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u4-c13-rev1"></td><td><input type="checkbox" id="u4-c13-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -340,12 +338,12 @@ th, td { padding: 12px 10px; }
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
 <tbody>
-<tr><td><input type="checkbox" id="u5-c14-status"></td><td>14</td><td class="chapter-name">Breathing and Exchange of Gases</td><td><input type="date" id="u5-c14-date"></td><td><input type="checkbox" id="u5-c14-rev1"></td><td><input type="checkbox" id="u5-c14-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c15-status"></td><td>15</td><td class="chapter-name">Body Fluids and Circulation</td><td><input type="date" id="u5-c15-date"></td><td><input type="checkbox" id="u5-c15-rev1"></td><td><input type="checkbox" id="u5-c15-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c16-status"></td><td>16</td><td class="chapter-name">Excretory Products & Elimination</td><td><input type="date" id="u5-c16-date"></td><td><input type="checkbox" id="u5-c16-rev1"></td><td><input type="checkbox" id="u5-c16-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c17-status"></td><td>17</td><td class="chapter-name">Locomotion and Movement</td><td><input type="date" id="u5-c17-date"></td><td><input type="checkbox" id="u5-c17-rev1"></td><td><input type="checkbox" id="u5-c17-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c18-status"></td><td>18</td><td class="chapter-name">Neural Control and Coordination</td><td><input type="date" id="u5-c18-date"></td><td><input type="checkbox" id="u5-c18-rev1"></td><td><input type="checkbox" id="u5-c18-rev2"></td></tr>
-<tr><td><input type="checkbox" id="u5-c19-status"></td><td>19</td><td class="chapter-name">Chemical Coordination & Integration</td><td><input type="date" id="u5-c19-date"></td><td><input type="checkbox" id="u5-c19-rev1"></td><td><input type="checkbox" id="u5-c19-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c14-status"></td><td>14</td><td class="chapter-name">Breathing and Exchange of Gases</td><td><input type="text" class="date-mask" id="u5-c14-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c14-rev1"></td><td><input type="checkbox" id="u5-c14-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c15-status"></td><td>15</td><td class="chapter-name">Body Fluids and Circulation</td><td><input type="text" class="date-mask" id="u5-c15-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c15-rev1"></td><td><input type="checkbox" id="u5-c15-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c16-status"></td><td>16</td><td class="chapter-name">Excretory Products & Elimination</td><td><input type="text" class="date-mask" id="u5-c16-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c16-rev1"></td><td><input type="checkbox" id="u5-c16-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c17-status"></td><td>17</td><td class="chapter-name">Locomotion and Movement</td><td><input type="text" class="date-mask" id="u5-c17-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c17-rev1"></td><td><input type="checkbox" id="u5-c17-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c18-status"></td><td>18</td><td class="chapter-name">Neural Control and Coordination</td><td><input type="text" class="date-mask" id="u5-c18-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c18-rev1"></td><td><input type="checkbox" id="u5-c18-rev2"></td></tr>
+<tr><td><input type="checkbox" id="u5-c19-status"></td><td>19</td><td class="chapter-name">Chemical Coordination & Integration</td><td><input type="text" class="date-mask" id="u5-c19-date" placeholder="DD/MM/YYYY" maxlength="10"></td><td><input type="checkbox" id="u5-c19-rev1"></td><td><input type="checkbox" id="u5-c19-rev2"></td></tr>
 </tbody>
 </table>
 </div>
@@ -416,6 +414,25 @@ function sanitizeInput(str) {
     "'": '&#39;',
     '"': '&quot;'
   }[tag] || tag));
+}
+
+// ==========================================
+// 🗓️ AUTOMATIC DD/MM/YYYY FORMAT MASK
+// ==========================================
+function setupDateMasks() {
+  document.querySelectorAll('.date-mask').forEach(input => {
+    input.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 8) v = v.substring(0, 8);
+      if (v.length >= 5) {
+        e.target.value = `${v.substring(0, 2)}/${v.substring(2, 4)}/${v.substring(4)}`;
+      } else if (v.length >= 3) {
+        e.target.value = `${v.substring(0, 2)}/${v.substring(2)}`;
+      } else {
+        e.target.value = v;
+      }
+    });
+  });
 }
 
 // ==========================================
@@ -527,6 +544,8 @@ function openSecurityModal(title, desc, icon, confirmAction, confirmText, isDang
 // 🛡️ PROTOCOL 5: 100% OFFLINE PRIVACY SANDBOX
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+  setupDateMasks();
+
   let storageAvailable = true;
   try { localStorage.getItem('test'); } catch(e) { storageAvailable = false; }
 
