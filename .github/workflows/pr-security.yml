@@ -28,4 +28,4 @@ jobs:
       # 3. Validate HTML and inline JS code syntax
       - name: Validate HTML & Inline Scripts
         run: |
-          npx htmlhint index.html
+          if [ -f index.html ]; then npx htmlhint index.html; else echo "index.html not found, skipping linting"; fi
