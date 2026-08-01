@@ -6,6 +6,9 @@
 <title>Biology NCERT Master Tracker</title>
 <meta name="description" content="A highly secure, beautiful, biology-themed NCERT Master Tracker.">
 
+<!-- CSP: Optimized for Local File Execution while maintaining strict Anti-XSS Protection -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none';">
+
 <!-- Modern Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -423,13 +426,14 @@ return "BIO-SECURE-SIG-" + Math.abs(hash).toString(36) + "-" + dataString.length
 // 2. UI COMPONENTS (Logs, Toasts & Modals)
 // ==========================================
 
+// Core Activity Log Engine
 function recordActivityLog(message, type) {
 let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
 const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-logs.unshift({ time, message, type });
-if (logs.length > 50) logs.pop();
+logs.unshift({ time, message, type }); // Add to start
+if (logs.length > 50) logs.pop(); // Keep only last 50 entries
 localStorage.setItem('bio_activity_logs', JSON.stringify(logs));
-renderActivityLogs();
+renderActivityLogs(); // Update UI if modal is open
 }
 
 function renderActivityLogs() {
@@ -450,8 +454,10 @@ return <div class="log-entry"&gt; &lt;span class="log-time"&gt;[${log.time}]</sp
 }
 
 function showCustomMessage(message, type = 'info') {
+// Automatically save every toast popup to the persistent Activity Log
 recordActivityLog(message, type);
 
+// Show the temporary Toast
 const container = document.getElementById('toast-container');
 const msgBox = document.createElement('div');
 msgBox.className = custom-message-box ${type}`;
@@ -467,6 +473,7 @@ setTimeout(() => msgBox.remove(), 400);
 }, 3000);
 }
 
+// Modal Control Logic
 const securityModal = document.getElementById('security-modal');
 const logModal = document.getElementById('log-modal');
 
@@ -509,32 +516,27 @@ securityModal.classList.add('active');
 // 3. INITIALIZATION & STORAGE ENGINE
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-// Event Listeners for Export/Import
-document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
-document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
-document.getElementById('import-file').addEventListener('change', executeSecureImport);
+let storageAvailable = true;
+try { localStorage.getItem('test'); } catch(e) { storageAvailable = false; }
+
+if(!storageAvailable) {
+setTimeout(() => showCustomMessage('Warning: LocalStorage blocked by browser. Auto-save disabled.', 'error'), 1000);
+return;
+}
 
 const allInputs = document.querySelectorAll('input:not([type="file"]), textarea');
 let textChangeTimeout;
 
 allInputs.forEach(input => {
-try {
 const savedValue = localStorage.getItem(input.id);
 if (savedValue !== null) {
 if (input.type === 'checkbox') input.checked = (savedValue === 'true');
 else input.value = sanitizeInput(savedValue);
 }
-} catch(e) {}
 
 input.addEventListener('input', (e) => {
 let valueToSave = e.target.type === 'checkbox' ? (e.target.checked ? 'true' : 'false') : sanitizeInput(e.target.value);
-
-try {
 localStorage.setItem(e.target.id, valueToSave);
-} catch(e) {
-showCustomMessage('Warning: Browser blocked saving.', 'error');
-return;
-}
 
 if (e.target.type === 'checkbox') {
 showCustomMessage('Progress Checkpoint Saved', 'success');
@@ -544,6 +546,11 @@ textChangeTimeout = setTimeout(() => showCustomMessage('Text Data Auto-Saved', '
 }
 });
 });
+
+// Event Listeners for Export/Import
+document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
+document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
+document.getElementById('import-file').addEventListener('change', executeSecureImport);
 });
 
 // ==========================================
@@ -625,10 +632,7 @@ let safeValue = importedData.payload[key];
 const targetInput = document.getElementById(key);
 if (targetInput.type === 'checkbox') safeValue = (safeValue === true || safeValue === 'true') ? 'true' : 'false';
 else safeValue = sanitizeInput(String(safeValue));
-
-try {
 localStorage.setItem(key, safeValue);
-} catch(e) {}
 }
 }
 
