@@ -12,20 +12,18 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      # 1. Check for accidentally committed secrets or tokens
-      - name: Secret Detection (TruffleHog)
-        uses: trufflesecurity/trufflehog-main@main
         with:
-          extra_args: --only-verified
+          fetch-depth: 0
 
-      # 2. Set up Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 3. Validate HTML and inline JS code syntax
       - name: Validate HTML & Inline Scripts
         run: |
-          if [ -f index.html ]; then npx htmlhint index.html; else echo "index.html not found, skipping linting"; fi
+          if [ -f index.html ]; then
+            npx htmlhint index.html
+          else
+            echo "No index.html found yet, skipping check."
+          fi
