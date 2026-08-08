@@ -276,16 +276,6 @@ margin: 0;
 transition: color 0.3s ease;
 }
 
-.digit-flip {
-animation: textDigitFlip 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes textDigitFlip {
-0% { transform: rotateX(0deg); opacity: 1; }
-50% { transform: rotateX(-90deg); opacity: 0.3; }
-100% { transform: rotateX(0deg); opacity: 1; }
-}
-
 /* Unit Sections */
 .unit-header {
 padding: 18px 24px;
@@ -358,6 +348,11 @@ animation: alarmPulse 0.8s infinite alternate ease-in-out;
 100% { transform: scale(1.08); }
 }
 
+.btn-theme {
+background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+color: white;
+}
+
 .btn-export { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
 .btn-export:hover { transform: translateY(-3px); }
 .btn-import { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
@@ -365,17 +360,31 @@ animation: alarmPulse 0.8s infinite alternate ease-in-out;
 
 .file-input-hidden { display: none; }
 
-/* FULLSCREEN FOCUS OVERLAY */
+/* FULLSCREEN FOCUS OVERLAY & 12 HIGH-TECH THEMES */
 .fullscreen-timer-overlay {
 position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
 background: radial-gradient(circle at center, #064e3b 0%, #022c22 60%, #020617 100%);
 color: #f8fafc;
 z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0.3s ease;
+visibility: hidden; opacity: 0; transition: background 0.5s ease, opacity 0.3s ease, visibility 0.3s ease;
 will-change: opacity, visibility;
 padding: 20px;
 overflow: hidden !important;
 }
+
+/* 🎨 12 COLOR THEMES */
+.fullscreen-timer-overlay.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 60%, #020617 100%); --fs-digit-color: #38bdf8; --fs-glow: rgba(56, 189, 248, 0.75); }
+.fullscreen-timer-overlay.theme-cyan { background: radial-gradient(circle at center, #0c4a6e 0%, #082f49 60%, #030712 100%); --fs-digit-color: #22d3ee; --fs-glow: rgba(34, 211, 238, 0.75); }
+.fullscreen-timer-overlay.theme-purple { background: radial-gradient(circle at center, #4c1d95 0%, #2e1065 60%, #030712 100%); --fs-digit-color: #c084fc; --fs-glow: rgba(192, 132, 252, 0.75); }
+.fullscreen-timer-overlay.theme-crimson { background: radial-gradient(circle at center, #881337 0%, #4c0519 60%, #090003 100%); --fs-digit-color: #f43f5e; --fs-glow: rgba(244, 63, 94, 0.75); }
+.fullscreen-timer-overlay.theme-amber { background: radial-gradient(circle at center, #78350f 0%, #451a03 60%, #0c0400 100%); --fs-digit-color: #fbbf24; --fs-glow: rgba(251, 191, 36, 0.75); }
+.fullscreen-timer-overlay.theme-navy { background: radial-gradient(circle at center, #1e3a8a 0%, #172554 60%, #020617 100%); --fs-digit-color: #60a5fa; --fs-glow: rgba(96, 165, 250, 0.75); }
+.fullscreen-timer-overlay.theme-rose { background: radial-gradient(circle at center, #831843 0%, #500724 60%, #0d0006 100%); --fs-digit-color: #f472b6; --fs-glow: rgba(244, 114, 182, 0.75); }
+.fullscreen-timer-overlay.theme-lime { background: radial-gradient(circle at center, #14532d 0%, #052e16 60%, #000a03 100%); --fs-digit-color: #a3e635; --fs-glow: rgba(163, 230, 53, 0.75); }
+.fullscreen-timer-overlay.theme-tokyo { background: radial-gradient(circle at center, #3b0764 0%, #1e1b4b 60%, #030712 100%); --fs-digit-color: #ff70a6; --fs-glow: rgba(255, 112, 166, 0.75); }
+.fullscreen-timer-overlay.theme-monochrome { background: radial-gradient(circle at center, #18181b 0%, #09090b 60%, #000000 100%); --fs-digit-color: #ffffff; --fs-glow: rgba(255, 255, 255, 0.85); }
+.fullscreen-timer-overlay.theme-lavender { background: radial-gradient(circle at center, #312e81 0%, #1e1b4b 60%, #030712 100%); --fs-digit-color: #a5b4fc; --fs-glow: rgba(165, 180, 252, 0.75); }
+.fullscreen-timer-overlay.theme-volcano { background: radial-gradient(circle at center, #7c2d12 0%, #431407 60%, #0a0200 100%); --fs-digit-color: #ff6b35; --fs-glow: rgba(255, 107, 53, 0.75); }
 
 .fullscreen-timer-overlay.active { visibility: visible; opacity: 1; pointer-events: auto; }
 
@@ -400,7 +409,7 @@ margin-bottom: 20px;
 text-align: center;
 }
 
-/* 📲 Dynamic Tilt / Orientation Prompt Banner */
+/* 📲 Dynamic Tilt Banner */
 .tilt-hint-banner {
 position: absolute;
 top: 25px;
@@ -463,7 +472,7 @@ gap: clamp(4px, 1vw, 10px);
 position: relative;
 width: clamp(65px, 12vw, 140px);
 height: clamp(90px, 18vw, 180px);
-background: rgba(2, 44, 34, 0.85);
+background: rgba(2, 26, 20, 0.85);
 border-radius: 16px;
 border: 2px solid var(--glass-border);
 box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
@@ -476,42 +485,32 @@ transition: border-color 0.25s ease;
 }
 
 .flip-card:hover {
-border-color: #38bdf8;
+border-color: var(--fs-digit-color, #38bdf8);
 }
 
-/* 🌟 CYAN GLOWING DIGIT TEXT ENHANCEMENT */
+/* STABLE GLOWING DIGIT TEXT */
 .flip-digit-span {
 display: inline-block;
 font-family: 'JetBrains Mono', monospace;
 font-size: clamp(3.8rem, 14vw, 11rem);
 font-weight: 800;
-color: #38bdf8;
-text-shadow: 0 0 12px rgba(56, 189, 248, 0.65), 0 0 25px rgba(56, 189, 248, 0.35);
-transition: color 0.4s ease;
+color: var(--fs-digit-color, #38bdf8);
+text-shadow: 0 0 14px var(--fs-glow, rgba(56, 189, 248, 0.75)), 0 0 30px var(--fs-glow, rgba(56, 189, 248, 0.4));
 backface-visibility: hidden;
 pointer-events: none;
 user-select: none;
 line-height: 0.8;
-}
-
-.flip-digit-span.page-turn {
-animation: fsDigitTextFlip 0.42s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes fsDigitTextFlip {
-0% { transform: rotateX(0deg); opacity: 1; }
-50% { transform: rotateX(-90deg); opacity: 0.2; }
-100% { transform: rotateX(0deg); opacity: 1; }
+transform: translateZ(0);
 }
 
 .flip-colon {
 font-family: 'JetBrains Mono', monospace;
 font-size: clamp(2.5rem, 8vw, 8rem);
 font-weight: 800;
-color: #38bdf8;
+color: var(--fs-digit-color, #38bdf8);
 opacity: 0.9;
 margin: 0 2px;
-text-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+text-shadow: 0 0 14px var(--fs-glow, rgba(56, 189, 248, 0.75));
 }
 
 .fs-preset-btns {
@@ -532,9 +531,9 @@ transition: all 0.25s ease;
 }
 
 .fs-preset-btns button:hover {
-background: #38bdf8;
+background: var(--fs-digit-color, #38bdf8);
 color: #030712;
-border-color: #38bdf8;
+border-color: var(--fs-digit-color, #38bdf8);
 }
 
 .fs-controls-group {
@@ -642,7 +641,7 @@ display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY
 .custom-message-box.success { border-left: 4px solid var(--success); }
 .custom-message-box.error { border-left: 4px solid var(--danger); background: rgba(127, 29, 29, 0.95); }
 
-/* 📱 RESPONSIVE DESIGN & MOBILE TIMER LAYOUT FIXES */
+/* 📱 PERFECT MOBILE ALIGNMENTS FOR FULLSCREEN BUTTONS */
 @media (max-width: 900px) {
 body { padding: 12px; }
 .info-card { grid-template-columns: 1fr; }
@@ -664,37 +663,40 @@ header { margin-bottom: 20px; }
 .fullscreen-timer-overlay { padding: 15px 10px; justify-content: center; }
 .fs-subtext { font-size: 0.8rem; margin-bottom: 15px; }
 
-.flip-clock-container { width: 100%; max-width: 100%; gap: 1.2vw; margin-bottom: 25px;}
+.flip-clock-container { width: 100%; max-width: 100%; gap: 1.2vw; margin-bottom: 20px;}
 .flip-unit { gap: 1vw; }
 .flip-card { width: 13.5vw; height: 21vw; border-radius: 10px; }
 .flip-digit-span { font-size: 16vw; }
 .flip-colon { font-size: 12vw; margin: 0; }
 
-.fs-preset-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 18px;}
+/* Even 2x2 Grid for Preset Buttons */
+.fs-preset-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 15px;}
 .fs-preset-btns button { padding: 10px 4px; font-size: 0.75rem; width: 100%; border-radius: 10px; }
 
-.fs-controls-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-.fs-controls-group .btn { padding: 12px 10px; font-size: 0.9rem; width: 100%; }
+/* Balanced 2-Column Grid for Control Buttons in Mobile Portrait */
+.fs-controls-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.fs-controls-group .btn { padding: 12px 6px; font-size: 0.85rem; width: 100%; text-align: center; justify-content: center; }
+.btn-fullscreen-exit { grid-column: span 2; }
 .floating-log-btn { bottom: 15px; right: 15px; padding: 8px 14px; font-size: 0.8rem; }
 }
 
 /* LANDSCAPE MOBILE FIXES */
 @media (max-height: 600px) and (orientation: landscape) {
-.fullscreen-timer-overlay { padding: 8px 12px; justify-content: center; }
+.fullscreen-timer-overlay { padding: 6px 12px; justify-content: center; }
 .fs-content-deck { max-height: 98vh; justify-content: space-between; }
 .fs-subtext { display: none; }
 
-.flip-clock-container { margin: 2px 0 8px 0; gap: 1.5vw; width: auto; }
+.flip-clock-container { margin: 2px 0 6px 0; gap: 1.5vw; width: auto; }
 .flip-unit { gap: 0.8vw; }
 .flip-card { height: 42vh; width: 11vw; min-width: 42px; border-radius: 10px; border-width: 1px; }
 .flip-digit-span { font-size: 34vh; }
 .flip-colon { font-size: 28vh; margin: 0; }
 
 .fs-preset-btns { margin-bottom: 6px; gap: 6px; flex-wrap: nowrap; width: auto; }
-.fs-preset-btns button { padding: 5px 12px; font-size: 0.72rem; border-radius: 8px; white-space: nowrap; }
+.fs-preset-btns button { padding: 4px 10px; font-size: 0.7rem; border-radius: 8px; white-space: nowrap; }
 
-.fs-controls-group { gap: 8px; width: auto; flex-direction: row; flex-wrap: nowrap; }
-.fs-controls-group .btn { padding: 6px 14px; font-size: 0.78rem; border-radius: 8px; flex: 0 1 auto; white-space: nowrap; }
+.fs-controls-group { gap: 6px; width: auto; flex-direction: row; flex-wrap: nowrap; }
+.fs-controls-group .btn { padding: 6px 12px; font-size: 0.75rem; border-radius: 8px; flex: 0 1 auto; white-space: nowrap; }
 .floating-log-btn { display: none; }
 
 .fs-edit-overlay { gap: 10px; padding: 10px; }
@@ -713,7 +715,7 @@ header { margin-bottom: 20px; }
 <!-- TARGETED SET TIMER CONTROL CARD -->
 <section class="glass-card timer-panel">
 <div class="timer-title-group">
-<h3 id="timer-header-title">⏳ TARGETED STUDY SET TIMER</h3>
+<h3 id="timer-header-title">⏳TARGETED STUDY SET TIMER </h3>
 <p style="font-size: 0.88rem; color: var(--text-muted);">Set target time for your active chapter study session.</p>
 </div>
 
@@ -853,9 +855,9 @@ header { margin-bottom: 20px; }
 </main>
 
 <!-- FULL-SCREEN STUDY TIMER OVERLAY -->
-<div id="fullscreen-timer-modal" class="fullscreen-timer-overlay">
+<div id="fullscreen-timer-modal" class="fullscreen-timer-overlay theme-emerald">
 
-<!-- 📲 Temporary 4-Second Mobile Landscape Orientation Hint -->
+<!-- 📲 Temporary 7-Second Mobile Landscape Orientation Hint -->
 <div class="tilt-hint-banner" id="fs-tilt-hint">
   <span class="tilt-icon-anim">📱</span>
   <span>Landscape mode for the best view!</span>
@@ -909,6 +911,7 @@ header { margin-bottom: 20px; }
     <button class="btn btn-primary" id="btn-fs-toggle">▶️ Start Session</button>
     <button class="btn btn-warning" id="btn-fs-pause" style="display: none;">⏸️ Pause Session</button>
     <button class="btn btn-danger" id="btn-fs-stop">⏹️ Stop / Reset</button>
+    <button class="btn btn-theme" id="btn-fs-theme">🎨 Theme</button>
     <button class="btn btn-alarm" id="btn-fs-alarm-stop" style="display: none;">🔔 Stop Ringtone</button>
     <button class="btn btn-fullscreen-exit" id="btn-fs-close">🚪 Exit Fullscreen</button>
   </div>
@@ -1043,7 +1046,7 @@ function stopAlarmRingtone() {
   document.getElementById('btn-fs-pause').style.display = 'none';
 
   globalTimeRemaining = savedInitialSeconds > 0 ? savedInitialSeconds : getInputsTotalSeconds();
-  syncAllTimerDisplays(true);
+  syncAllTimerDisplays();
 
   showCustomMessage('Ringtone alarm stopped.', 'info');
 }
@@ -1120,6 +1123,7 @@ const fsToggleBtn = document.getElementById('btn-fs-toggle');
 const fsPauseBtn = document.getElementById('btn-fs-pause');
 const fsStopBtn = document.getElementById('btn-fs-stop');
 const fsAlarmStopBtn = document.getElementById('btn-fs-alarm-stop');
+const fsThemeBtn = document.getElementById('btn-fs-theme');
 
 const inHrs = document.getElementById('in-hrs');
 const inMins = document.getElementById('in-mins');
@@ -1132,34 +1136,21 @@ function getInputsTotalSeconds() {
   return (h * 3600) + (m * 60) + s;
 }
 
-// FIXED: Only trigger text flip animation if value actually changed
-function updateInputBoxWithTextFlip(inputElem, newStrVal, forceNoAnim = false) {
+function updateInputBoxWithTextFlip(inputElem, newStrVal) {
   if (inputElem.value !== newStrVal) {
-    if (!forceNoAnim) {
-      inputElem.classList.remove('digit-flip');
-      void inputElem.offsetWidth;
-      inputElem.classList.add('digit-flip');
-    }
     inputElem.value = newStrVal;
   }
 }
 
-// FIXED: Prevents entire clock / HH digits from blinking when seconds change
-function updateFlipDigitSpan(spanId, newDigit, forceNoAnim = false) {
+// STRICT ZERO-FLASH DIGIT UPDATER
+function updateFlipDigitSpan(spanId, newDigit) {
   const span = document.getElementById(spanId);
-  if (!span) return;
-
-  if (span.innerText !== newDigit) {
-    if (!forceNoAnim) {
-      span.classList.remove('page-turn');
-      void span.offsetWidth; // Force CSS reflow for active digit only
-      span.classList.add('page-turn');
-    }
+  if (span && span.innerText !== newDigit) {
     span.innerText = newDigit;
   }
 }
 
-function syncAllTimerDisplays(forceNoAnim = false) {
+function syncAllTimerDisplays() {
   const h = Math.floor(globalTimeRemaining / 3600);
   const m = Math.floor((globalTimeRemaining % 3600) / 60);
   const s = globalTimeRemaining % 60;
@@ -1168,20 +1159,18 @@ function syncAllTimerDisplays(forceNoAnim = false) {
   const strM = pad2(m);
   const strS = pad2(s);
 
-  // Sync Homepage Inputs
-  updateInputBoxWithTextFlip(inHrs, strH, forceNoAnim);
-  updateInputBoxWithTextFlip(inMins, strM, forceNoAnim);
-  updateInputBoxWithTextFlip(inSecs, strS, forceNoAnim);
+  updateInputBoxWithTextFlip(inHrs, strH);
+  updateInputBoxWithTextFlip(inMins, strM);
+  updateInputBoxWithTextFlip(inSecs, strS);
 
-  // Sync Fullscreen Digit Cards individually (only modified digits animate)
   const formattedAll = `${strH}${strM}${strS}`;
 
-  updateFlipDigitSpan('card-h1', formattedAll[0], forceNoAnim);
-  updateFlipDigitSpan('card-h2', formattedAll[1], forceNoAnim);
-  updateFlipDigitSpan('card-m1', formattedAll[2], forceNoAnim);
-  updateFlipDigitSpan('card-m2', formattedAll[3], forceNoAnim);
-  updateFlipDigitSpan('card-s1', formattedAll[4], forceNoAnim);
-  updateFlipDigitSpan('card-s2', formattedAll[5], forceNoAnim);
+  updateFlipDigitSpan('card-h1', formattedAll[0]);
+  updateFlipDigitSpan('card-h2', formattedAll[1]);
+  updateFlipDigitSpan('card-m1', formattedAll[2]);
+  updateFlipDigitSpan('card-m2', formattedAll[3]);
+  updateFlipDigitSpan('card-s1', formattedAll[4]);
+  updateFlipDigitSpan('card-s2', formattedAll[5]);
 }
 
 function updateInputsStyleState(running) {
@@ -1266,7 +1255,7 @@ function stopGlobalTimer(isCompleted = false) {
   if (isCompleted) {
     updateInputsStyleState(false);
     globalTimeRemaining = 0;
-    syncAllTimerDisplays(true);
+    syncAllTimerDisplays();
     startAlarmRingtone();
     showCustomMessage('🎯 Targeted Study Session Completed! Press Stop Ringtone to turn off alarm.', 'success');
   } else {
@@ -1294,7 +1283,7 @@ function resetGlobalTimer() {
   fsAlarmStopBtn.style.display = 'none';
 
   globalTimeRemaining = savedInitialSeconds > 0 ? savedInitialSeconds : getInputsTotalSeconds();
-  syncAllTimerDisplays(true);
+  syncAllTimerDisplays();
   showCustomMessage('Timer reset to target time.', 'info');
 }
 
@@ -1306,7 +1295,7 @@ function setTimerPreset(h, m, s) {
 
   globalTimeRemaining = (h * 3600) + (m * 60) + s;
   savedInitialSeconds = globalTimeRemaining;
-  syncAllTimerDisplays(true);
+  syncAllTimerDisplays();
 }
 
 startTargetBtn.addEventListener('click', startGlobalTimer);
@@ -1318,6 +1307,31 @@ fsToggleBtn.addEventListener('click', startGlobalTimer);
 fsPauseBtn.addEventListener('click', pauseGlobalTimer);
 fsStopBtn.addEventListener('click', resetGlobalTimer);
 fsAlarmStopBtn.addEventListener('click', stopAlarmRingtone);
+
+// FULLSCREEN 12 COLOR THEME SWITCHER
+const fsThemes = [
+  { class: 'theme-emerald', name: 'Cyber Emerald' },
+  { class: 'theme-cyan', name: 'Neon Cyan' },
+  { class: 'theme-purple', name: 'Amethyst Purple' },
+  { class: 'theme-crimson', name: 'Crimson Blood' },
+  { class: 'theme-amber', name: 'Amber Solar' },
+  { class: 'theme-navy', name: 'Midnight Navy' },
+  { class: 'theme-rose', name: 'Rose Quartz' },
+  { class: 'theme-lime', name: 'Matrix Lime' },
+  { class: 'theme-tokyo', name: 'Tokyo Sunset' },
+  { class: 'theme-monochrome', name: 'Monochrome OLED' },
+  { class: 'theme-lavender', name: 'Pastel Lavender' },
+  { class: 'theme-volcano', name: 'Volcanic Magma' }
+];
+let currentThemeIndex = 0;
+
+fsThemeBtn.addEventListener('click', () => {
+  fsModal.classList.remove(fsThemes[currentThemeIndex].class);
+  currentThemeIndex = (currentThemeIndex + 1) % fsThemes.length;
+  fsModal.classList.add(fsThemes[currentThemeIndex].class);
+  
+  showCustomMessage(`Theme: ${fsThemes[currentThemeIndex].name}`, 'info');
+});
 
 const homepageInputs = [inHrs, inMins, inSecs];
 
@@ -1336,7 +1350,7 @@ homepageInputs.forEach((inp, idx) => {
       savedInitialSeconds = globalTimeRemaining;
       startTargetBtn.innerText = '▶️ Start Set';
       fsToggleBtn.innerText = '▶️ Start Session';
-      syncAllTimerDisplays(true);
+      syncAllTimerDisplays();
     }
   });
 
@@ -1350,7 +1364,7 @@ homepageInputs.forEach((inp, idx) => {
       savedInitialSeconds = globalTimeRemaining;
       startTargetBtn.innerText = '▶️ Start Set';
       fsToggleBtn.innerText = '▶️ Start Session';
-      syncAllTimerDisplays(true);
+      syncAllTimerDisplays();
 
       if (val.length >= 2 && idx < homepageInputs.length - 1) {
         homepageInputs[idx + 1].focus();
@@ -1435,7 +1449,7 @@ document.getElementById('btn-save-fs-edit').addEventListener('click', () => {
 
   globalTimeRemaining = getInputsTotalSeconds();
   savedInitialSeconds = globalTimeRemaining;
-  syncAllTimerDisplays(true);
+  syncAllTimerDisplays();
 
   fsEditOverlay.classList.remove('active');
   showCustomMessage('Custom duration saved!', 'success');
@@ -1467,10 +1481,10 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Launch Fullscreen & Trigger 4-Second Orientation Hint
+// Launch Fullscreen & Trigger 7-Second Orientation Hint
 let tiltHintTimeout = null;
 
-function showTiltHintFor8Seconds() {
+function showTiltHintFor7Seconds() {
   const hintBanner = document.getElementById('fs-tilt-hint');
   if (!hintBanner) return;
 
@@ -1479,14 +1493,14 @@ function showTiltHintFor8Seconds() {
 
   tiltHintTimeout = setTimeout(() => {
     hintBanner.classList.remove('show');
-  }, 4000); // Disappears after 4 seconds
+  }, 7000); // Disappears after 7 seconds
 }
 
 document.getElementById('btn-open-fullscreen-timer').addEventListener('click', () => {
   if (!isTimerRunning && globalTimeRemaining <= 0) {
     globalTimeRemaining = getInputsTotalSeconds();
   }
-  syncAllTimerDisplays(true);
+  syncAllTimerDisplays();
   
   enterTrueFullscreen();
   requestWakeLock();
@@ -1495,7 +1509,7 @@ document.getElementById('btn-open-fullscreen-timer').addEventListener('click', (
     fsModal.classList.add('active');
     document.documentElement.classList.add('no-scroll');
     document.body.classList.add('no-scroll');
-    showTiltHintFor8Seconds();
+    showTiltHintFor7Seconds();
   });
 
   showCustomMessage('Entered ULTRA Focus Mode. Browser & Taskbar Hidden.', 'info');
@@ -1532,7 +1546,7 @@ document.addEventListener('keydown', (e) => {
 
 globalTimeRemaining = getInputsTotalSeconds();
 savedInitialSeconds = globalTimeRemaining;
-syncAllTimerDisplays(true);
+syncAllTimerDisplays();
 
 // Hybrid Date System
 function setupDateMasks() {
