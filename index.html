@@ -277,13 +277,12 @@ transition: color 0.3s ease;
 }
 
 .digit-flip {
-animation: textDigitFlip 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+animation: textDigitFlip 0.3s ease-out;
 }
 
 @keyframes textDigitFlip {
-0% { transform: rotateX(0deg); opacity: 1; }
-50% { transform: rotateX(-90deg); opacity: 0.3; }
-100% { transform: rotateX(0deg); opacity: 1; }
+0% { opacity: 0.4; transform: translateY(-3px); }
+100% { opacity: 1; transform: translateY(0); }
 }
 
 /* Unit Sections */
@@ -479,29 +478,29 @@ transition: border-color 0.25s ease;
 border-color: #38bdf8;
 }
 
-/* 🌟 CYAN GLOWING DIGIT TEXT ENHANCEMENT */
+/* 🌟 CYAN GLOWING DIGIT TEXT */
 .flip-digit-span {
 display: inline-block;
 font-family: 'JetBrains Mono', monospace;
 font-size: clamp(3.8rem, 14vw, 11rem);
 font-weight: 800;
 color: #38bdf8;
-text-shadow: 0 0 12px rgba(56, 189, 248, 0.65), 0 0 25px rgba(56, 189, 248, 0.35);
+text-shadow: 0 0 12px rgba(56, 189, 248, 0.75), 0 0 28px rgba(56, 189, 248, 0.4);
 transition: color 0.4s ease;
 backface-visibility: hidden;
 pointer-events: none;
 user-select: none;
 line-height: 0.8;
+will-change: transform, opacity;
 }
 
 .flip-digit-span.page-turn {
-animation: fsDigitTextFlip 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+animation: fsDigitTextFlip 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fsDigitTextFlip {
-0% { transform: rotateX(0deg); opacity: 1; }
-50% { transform: rotateX(-90deg); opacity: 0.2; }
-100% { transform: rotateX(0deg); opacity: 1; }
+0% { opacity: 0.3; transform: scale(0.95); }
+100% { opacity: 1; transform: scale(1); }
 }
 
 .flip-colon {
@@ -511,7 +510,7 @@ font-weight: 800;
 color: #38bdf8;
 opacity: 0.9;
 margin: 0 2px;
-text-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+text-shadow: 0 0 12px rgba(56, 189, 248, 0.75);
 }
 
 .fs-preset-btns {
@@ -713,7 +712,7 @@ header { margin-bottom: 20px; }
 <!-- TARGETED SET TIMER CONTROL CARD -->
 <section class="glass-card timer-panel">
 <div class="timer-title-group">
-<h3 id="timer-header-title">⏳ TARGETED STUDY SET TIMER</h3>
+<h3 id="timer-header-title">⏳  TARGETED STUDY SET TIMER</h3>
 <p style="font-size: 0.88rem; color: var(--text-muted);">Set target time for your active chapter study session.</p>
 </div>
 
@@ -1132,30 +1131,29 @@ function getInputsTotalSeconds() {
   return (h * 3600) + (m * 60) + s;
 }
 
-// FIXED: Only trigger text flip animation if value actually changed
 function updateInputBoxWithTextFlip(inputElem, newStrVal, forceNoAnim = false) {
   if (inputElem.value !== newStrVal) {
+    inputElem.value = newStrVal;
     if (!forceNoAnim) {
       inputElem.classList.remove('digit-flip');
       void inputElem.offsetWidth;
       inputElem.classList.add('digit-flip');
     }
-    inputElem.value = newStrVal;
   }
 }
 
-// FIXED: Prevents entire clock / HH digits from blinking when seconds change
+// ISOLATED DIGIT FLIP: Animates ONLY changing digits without disturbing HH/MM
 function updateFlipDigitSpan(spanId, newDigit, forceNoAnim = false) {
   const span = document.getElementById(spanId);
   if (!span) return;
 
   if (span.innerText !== newDigit) {
+    span.innerText = newDigit;
     if (!forceNoAnim) {
       span.classList.remove('page-turn');
-      void span.offsetWidth; // Force CSS reflow for active digit only
+      void span.offsetWidth; // Clean reflow on target span only
       span.classList.add('page-turn');
     }
-    span.innerText = newDigit;
   }
 }
 
@@ -1173,7 +1171,7 @@ function syncAllTimerDisplays(forceNoAnim = false) {
   updateInputBoxWithTextFlip(inMins, strM, forceNoAnim);
   updateInputBoxWithTextFlip(inSecs, strS, forceNoAnim);
 
-  // Sync Fullscreen Digit Cards individually (only modified digits animate)
+  // Sync Fullscreen Digit Cards
   const formattedAll = `${strH}${strM}${strS}`;
 
   updateFlipDigitSpan('card-h1', formattedAll[0], forceNoAnim);
@@ -1479,7 +1477,7 @@ function showTiltHintFor4Seconds() {
 
   tiltHintTimeout = setTimeout(() => {
     hintBanner.classList.remove('show');
-  }, 4000); // Disappears after 4 seconds
+  }, 4000);
 }
 
 document.getElementById('btn-open-fullscreen-timer').addEventListener('click', () => {
