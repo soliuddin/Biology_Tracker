@@ -400,6 +400,49 @@ margin-bottom: 20px;
 text-align: center;
 }
 
+/* 📲 Dynamic Tilt / Orientation Prompt Banner */
+.tilt-hint-banner {
+position: absolute;
+top: 25px;
+left: 50%;
+transform: translateX(-50%) translateY(-20px);
+background: rgba(15, 23, 42, 0.92);
+border: 1px solid var(--bio-accent);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+color: #38bdf8;
+padding: 10px 22px;
+border-radius: 30px;
+font-weight: 700;
+font-size: 0.88rem;
+box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+z-index: 200;
+opacity: 0;
+pointer-events: none;
+transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+display: flex;
+align-items: center;
+gap: 10px;
+text-align: center;
+white-space: nowrap;
+}
+
+.tilt-hint-banner.show {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+
+.tilt-icon-anim {
+display: inline-block;
+font-size: 1.1rem;
+animation: tiltPhoneLoop 1.5s infinite ease-in-out;
+}
+
+@keyframes tiltPhoneLoop {
+0%, 100% { transform: rotate(0deg); }
+50% { transform: rotate(-90deg); }
+}
+
 /* Flip Clock Container */
 .flip-clock-container {
 display: flex;
@@ -429,21 +472,21 @@ align-items: center;
 justify-content: center;
 overflow: hidden;
 cursor: pointer;
-transition: all 0.25s ease;
+transition: border-color 0.25s ease;
 }
 
 .flip-card:hover {
-transform: translateY(-3px);
 border-color: #38bdf8;
 }
 
+/* 🌟 CYAN GLOWING DIGIT TEXT ENHANCEMENT */
 .flip-digit-span {
 display: inline-block;
 font-family: 'JetBrains Mono', monospace;
 font-size: clamp(3.8rem, 14vw, 11rem);
 font-weight: 800;
 color: #38bdf8;
-text-shadow: none;
+text-shadow: 0 0 12px rgba(56, 189, 248, 0.65), 0 0 25px rgba(56, 189, 248, 0.35);
 transition: color 0.4s ease;
 backface-visibility: hidden;
 pointer-events: none;
@@ -466,9 +509,9 @@ font-family: 'JetBrains Mono', monospace;
 font-size: clamp(2.5rem, 8vw, 8rem);
 font-weight: 800;
 color: #38bdf8;
-opacity: 0.85;
+opacity: 0.9;
 margin: 0 2px;
-text-shadow: none;
+text-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
 }
 
 .fs-preset-btns {
@@ -635,7 +678,7 @@ header { margin-bottom: 20px; }
 .floating-log-btn { bottom: 15px; right: 15px; padding: 8px 14px; font-size: 0.8rem; }
 }
 
-/* LANDSCAPE MOBILE FIXES (Solves button overflow in image) */
+/* LANDSCAPE MOBILE FIXES */
 @media (max-height: 600px) and (orientation: landscape) {
 .fullscreen-timer-overlay { padding: 8px 12px; justify-content: center; }
 .fs-content-deck { max-height: 98vh; justify-content: space-between; }
@@ -670,7 +713,7 @@ header { margin-bottom: 20px; }
 <!-- TARGETED SET TIMER CONTROL CARD -->
 <section class="glass-card timer-panel">
 <div class="timer-title-group">
-<h3 id="timer-header-title">⏳ Targeted Study Set Timer</h3>
+<h3 id="timer-header-title">⏳ TARGETED STUDY SET TIMER</h3>
 <p style="font-size: 0.88rem; color: var(--text-muted);">Set target time for your active chapter study session.</p>
 </div>
 
@@ -811,6 +854,12 @@ header { margin-bottom: 20px; }
 
 <!-- FULL-SCREEN STUDY TIMER OVERLAY -->
 <div id="fullscreen-timer-modal" class="fullscreen-timer-overlay">
+
+<!-- 📲 Temporary 4-Second Mobile Landscape Orientation Hint -->
+<div class="tilt-hint-banner" id="fs-tilt-hint">
+  <span class="tilt-icon-anim">📱</span>
+  <span>Landscape mode for the best view!</span>
+</div>
 
 <!-- Inline Edit Modal Overlay -->
 <div class="fs-edit-overlay" id="fs-edit-overlay">
@@ -1083,6 +1132,7 @@ function getInputsTotalSeconds() {
   return (h * 3600) + (m * 60) + s;
 }
 
+// FIXED: Only trigger text flip animation if value actually changed
 function updateInputBoxWithTextFlip(inputElem, newStrVal, forceNoAnim = false) {
   if (inputElem.value !== newStrVal) {
     if (!forceNoAnim) {
@@ -1094,6 +1144,7 @@ function updateInputBoxWithTextFlip(inputElem, newStrVal, forceNoAnim = false) {
   }
 }
 
+// FIXED: Prevents entire clock / HH digits from blinking when seconds change
 function updateFlipDigitSpan(spanId, newDigit, forceNoAnim = false) {
   const span = document.getElementById(spanId);
   if (!span) return;
@@ -1101,7 +1152,7 @@ function updateFlipDigitSpan(spanId, newDigit, forceNoAnim = false) {
   if (span.innerText !== newDigit) {
     if (!forceNoAnim) {
       span.classList.remove('page-turn');
-      void span.offsetWidth;
+      void span.offsetWidth; // Force CSS reflow for active digit only
       span.classList.add('page-turn');
     }
     span.innerText = newDigit;
@@ -1117,10 +1168,12 @@ function syncAllTimerDisplays(forceNoAnim = false) {
   const strM = pad2(m);
   const strS = pad2(s);
 
+  // Sync Homepage Inputs
   updateInputBoxWithTextFlip(inHrs, strH, forceNoAnim);
   updateInputBoxWithTextFlip(inMins, strM, forceNoAnim);
   updateInputBoxWithTextFlip(inSecs, strS, forceNoAnim);
 
+  // Sync Fullscreen Digit Cards individually (only modified digits animate)
   const formattedAll = `${strH}${strM}${strS}`;
 
   updateFlipDigitSpan('card-h1', formattedAll[0], forceNoAnim);
@@ -1414,6 +1467,21 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Launch Fullscreen & Trigger 4-Second Orientation Hint
+let tiltHintTimeout = null;
+
+function showTiltHintFor4Seconds() {
+  const hintBanner = document.getElementById('fs-tilt-hint');
+  if (!hintBanner) return;
+
+  clearTimeout(tiltHintTimeout);
+  hintBanner.classList.add('show');
+
+  tiltHintTimeout = setTimeout(() => {
+    hintBanner.classList.remove('show');
+  }, 4000); // Disappears after 4 seconds
+}
+
 document.getElementById('btn-open-fullscreen-timer').addEventListener('click', () => {
   if (!isTimerRunning && globalTimeRemaining <= 0) {
     globalTimeRemaining = getInputsTotalSeconds();
@@ -1427,6 +1495,7 @@ document.getElementById('btn-open-fullscreen-timer').addEventListener('click', (
     fsModal.classList.add('active');
     document.documentElement.classList.add('no-scroll');
     document.body.classList.add('no-scroll');
+    showTiltHintFor4Seconds();
   });
 
   showCustomMessage('Entered ULTRA Focus Mode. Browser & Taskbar Hidden.', 'info');
@@ -1438,6 +1507,10 @@ function closeFullscreenOverlay() {
   fsModal.classList.remove('active');
   document.documentElement.classList.remove('no-scroll');
   document.body.classList.remove('no-scroll');
+  
+  const hintBanner = document.getElementById('fs-tilt-hint');
+  if (hintBanner) hintBanner.classList.remove('show');
+  
   exitTrueFullscreen();
   releaseWakeLock();
 }
