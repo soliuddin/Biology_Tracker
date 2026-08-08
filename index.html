@@ -191,7 +191,7 @@ transition: transform 0.2s;
 transform: scale(1.15);
 }
 
-/* Target Timer Panel */
+/* Target Timer Panel - Centered Stacked Header & Under Controls Layout */
 .timer-panel {
 padding: clamp(18px, 3vw, 25px) clamp(18px, 3vw, 30px);
 background: rgba(6, 78, 59, 0.2);
@@ -371,7 +371,6 @@ position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
 background: radial-gradient(circle at 50% 30%, #064e3b 0%, #022c22 45%, #020617 100%);
 color: #f8fafc;
 z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-/* Visibility hidden handles smoother OS transition for mobile */
 visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0.3s ease;
 will-change: opacity, visibility;
 padding: 20px;
@@ -461,8 +460,8 @@ justify-content: center;
 gap: clamp(6px, 1.5vw, 20px);
 padding: clamp(15px, 3vw, 25px) clamp(18px, 4vw, 35px);
 background: rgba(2, 44, 34, 0.65);
-backdrop-filter: blur(15px);
--webkit-backdrop-filter: blur(15px);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
 border-radius: 28px;
 border: 1.5px solid rgba(52, 211, 153, 0.35);
 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(52, 211, 153, 0.08);
@@ -479,8 +478,8 @@ gap: clamp(4px, 1vw, 8px);
 
 .flip-card {
 position: relative;
-width: clamp(55px, 14vw, 115px);
-height: clamp(80px, 20vw, 155px);
+width: clamp(48px, 11vw, 115px);
+height: clamp(72px, 16vw, 155px);
 background: #021a14;
 border-radius: 14px;
 border: 1.5px solid rgba(52, 211, 153, 0.25);
@@ -499,35 +498,11 @@ border-color: #38bdf8;
 box-shadow: 0 12px 30px rgba(56, 189, 248, 0.3);
 }
 
-/* Direct Typing Input Over Fullscreen Card */
-.flip-card input.fs-native-input {
-position: absolute;
-top: 0; left: 0; width: 100%; height: 100%;
-background: transparent;
-border: none;
-text-align: center;
-font-family: 'JetBrains Mono', monospace;
-font-size: clamp(3rem, 10vw, 8rem);
-font-weight: 800;
-color: #38bdf8;
-text-shadow: 0 0 18px rgba(56, 189, 248, 0.5);
-outline: none;
-cursor: pointer;
-padding: 0;
-margin: 0;
-z-index: 5;
-caret-color: transparent;
-}
-
-.flip-card input.fs-native-input:focus {
-background: rgba(0, 0, 0, 0.25);
-}
-
 /* Text Flip Span */
 .flip-digit-span {
 display: inline-block;
 font-family: 'JetBrains Mono', monospace;
-font-size: clamp(3rem, 10vw, 8rem);
+font-size: clamp(2.5rem, 9vw, 8rem);
 font-weight: 800;
 color: #38bdf8;
 text-shadow: 0 0 18px rgba(56, 189, 248, 0.5);
@@ -644,6 +619,49 @@ padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(-
 .log-entry:last-child { border-bottom: none; }
 .log-time { color: var(--bio-accent); font-size: 0.8rem; white-space: nowrap; font-family: monospace; }
 
+/* Dark Glass Edit Overlay (The Small Screen Popup) */
+.fs-edit-overlay {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(2, 26, 20, 0.96);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+z-index: 100;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 18px;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease;
+border-radius: 28px;
+padding: 15px;
+}
+.fs-edit-overlay.active { opacity: 1; pointer-events: auto; }
+
+.fs-edit-box-row {
+display: flex;
+gap: 12px;
+align-items: center;
+}
+.fs-edit-input {
+width: clamp(55px, 15vw, 75px);
+height: clamp(44px, 10vw, 52px);
+background: #0b1329;
+border: 1.5px solid #38bdf8;
+border-radius: 12px;
+color: #38bdf8;
+font-family: 'JetBrains Mono', monospace;
+font-size: clamp(1.1rem, 3vw, 1.5rem);
+font-weight: 800;
+text-align: center;
+outline: none;
+}
+.fs-edit-input::selection {
+background: rgba(56, 189, 248, 0.3);
+color: #38bdf8;
+}
+
 /* Toasts */
 .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
 .custom-message-box {
@@ -665,35 +683,64 @@ body { padding: 12px; }
 .timer-buttons-group .btn { flex: 1 1 auto; min-width: 130px; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (orientation: portrait) {
 body { padding: 8px; }
 header { margin-bottom: 20px; }
 .timer-panel { padding: 18px 15px; }
 .glass-card { margin-bottom: 18px; border-radius: 16px; }
 .action-bar { flex-direction: column; align-items: stretch; text-align: center; }
 .action-bar button { width: 100%; }
-.fs-controls-group { flex-direction: column; width: 100%; max-width: 320px; }
-.fs-controls-group .btn { width: 100%; }
-.floating-log-btn { bottom: 15px; right: 15px; padding: 10px 16px; font-size: 0.85rem; }
+
+/* Mobile Portrait UI Overrides */
+.fullscreen-timer-overlay { padding: 10px; justify-content: center; }
+.fs-pill-badge { font-size: 0.75rem; padding: 6px 16px; margin-bottom: 10px; }
+.fs-urgency-banner { font-size: 0.75rem; padding: 5px 12px; margin-bottom: 15px; }
+
+.flip-clock-container { width: 100%; max-width: 100%; padding: 15px 5px; gap: 1vw; border-radius: 16px; margin-bottom: 20px;}
+.flip-unit { gap: 1vw; }
+.flip-card { width: 14vw; height: 22vw; border-radius: 8px; }
+.flip-digit-span { font-size: 18vw; }
+.flip-colon { font-size: 15vw; margin: 0; }
+
+.fs-preset-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 20px;}
+.fs-preset-btns button { padding: 8px; font-size: 0.75rem; width: 100%; }
+
+.fs-controls-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.fs-controls-group .btn { padding: 10px 5px; font-size: 0.85rem; width: 100%; }
+.btn-fullscreen-exit { grid-column: span 2; }
+.floating-log-btn { bottom: 15px; right: 15px; padding: 8px 14px; font-size: 0.8rem; }
 .fs-orb { display: none; } /* Disable heavy blur objects on mobile for speed */
 }
 
 /* 📱 DYNAMIC SCALING FOR PHONES/TABLETS ROTATED SIDEWAYS (LANDSCAPE) */
-@media (max-height: 500px) and (orientation: landscape) {
-.fullscreen-timer-overlay { padding: 10px; }
-.fs-pill-badge { margin-bottom: 2px; padding: 2px 12px; font-size: 0.7rem; }
-.fs-urgency-banner { display: none; } /* Hide urgency banner in landscape phone to maximize timer */
-.flip-clock-container { padding: 5px 15px; gap: 6px; margin: 0 0 10px 0; border-radius: 16px; }
-.flip-unit { gap: 4px; }
-.flip-card { height: 90px; width: 68px; border-radius: 10px; }
-.flip-digit-span { font-size: 4rem; }
-.flip-card input.fs-native-input { font-size: 4rem; }
-.flip-colon { font-size: 3rem; margin: 0; }
-.fs-preset-btns { margin-bottom: 8px; gap: 6px; }
-.fs-preset-btns button { padding: 4px 10px; font-size: 0.75rem; }
-.fs-controls-group { gap: 8px; }
-.fs-controls-group .btn { padding: 6px 14px; font-size: 0.85rem; }
+@media (max-height: 600px) and (orientation: landscape) {
+.fullscreen-timer-overlay { padding: 5px 15px; justify-content: center; gap: 10px; }
+.fs-pill-badge { display: none; } /* Hide to save vertical space */
+.fs-urgency-banner { display: none; } 
+
+/* Expand timer to dominate screen */
+.flip-clock-container { 
+  padding: 10px; gap: 2vw; margin: 0; 
+  background: rgba(2, 44, 34, 0.4); 
+  box-shadow: none; border-radius: 16px; 
+  width: auto; max-width: 95vw;
+}
+.flip-unit { gap: 0.8vw; }
+.flip-card { height: 50vh; width: 11vw; min-width: 45px; border-radius: 8px; }
+.flip-digit-span { font-size: 40vh; }
+.flip-colon { font-size: 35vh; margin: 0; }
+
+/* Compact buttons row */
+.fs-preset-btns { margin-bottom: 0px; gap: 8px; }
+.fs-preset-btns button { padding: 4px 12px; font-size: 0.7rem; border-radius: 8px; }
+
+.fs-controls-group { gap: 10px; width: auto; flex-direction: row; flex-wrap: nowrap;}
+.fs-controls-group .btn { padding: 6px 14px; font-size: 0.8rem; border-radius: 8px; flex: 0 1 auto;}
 .fs-orb { display: none; }
+.floating-log-btn { display: none; } /* Hide in landscape to prevent obstruction */
+
+.fs-edit-overlay { gap: 10px; padding: 10px; }
+.fs-edit-input { height: 40px; width: 55px; font-size: 1.2rem; }
 }
 </style>
 </head>
@@ -849,10 +896,22 @@ header { margin-bottom: 20px; }
 
 <!-- ULTRA-MODERN FULL-SCREEN STUDY TIMER OVERLAY -->
 <div id="fullscreen-timer-modal" class="fullscreen-timer-overlay">
-<!-- Ambient Glowing Orbs -->
-<div class="fs-orb fs-orb-1"></div>
-<div class="fs-orb fs-orb-2"></div>
-<div class="fs-orb fs-orb-3"></div>
+
+<!-- Inline Edit Modal Overlay for Direct Card Click Editing -->
+<div class="fs-edit-overlay" id="fs-edit-overlay">
+  <div style="font-weight: 700; color: #38bdf8; letter-spacing: 1px;">⚙️ SET TARGET DURATION</div>
+  <div class="fs-edit-box-row">
+    <input type="number" class="fs-edit-input" id="fs-edit-hrs" min="0" max="23" value="00" placeholder="HH">
+    <span style="font-weight: 800; color: #f8fafc; font-size: 1.2rem;">:</span>
+    <input type="number" class="fs-edit-input" id="fs-edit-mins" min="0" max="59" value="00" placeholder="MM">
+    <span style="font-weight: 800; color: #f8fafc; font-size: 1.2rem;">:</span>
+    <input type="number" class="fs-edit-input" id="fs-edit-secs" min="0" max="59" value="00" placeholder="SS">
+  </div>
+  <div style="display: flex; gap: 10px; margin-top: 5px;">
+    <button class="btn btn-primary" id="btn-save-fs-edit">Apply Target</button>
+    <button class="btn btn-secondary" id="btn-cancel-fs-edit" style="color: #f8fafc; border-color: rgba(255,255,255,0.2);">Cancel</button>
+  </div>
+</div>
 
 <div class="fs-content-deck">
   <!-- BEAUTIFUL PILL HEADER BADGE -->
@@ -862,36 +921,18 @@ header { margin-bottom: 20px; }
   <!-- Fullscreen Digit Display Cards (CLEAN MATTE CARDS) -->
   <div class="flip-clock-container" id="fs-flip-clock">
     <div class="flip-unit">
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-h1" min="0" max="2" value="0">
-        <span class="flip-digit-span" id="card-h1">0</span>
-      </div>
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-h2" min="0" max="9" value="0">
-        <span class="flip-digit-span" id="card-h2">0</span>
-      </div>
+      <div class="flip-card" id="fscard-0"><span class="flip-digit-span" id="card-h1">0</span></div>
+      <div class="flip-card" id="fscard-1"><span class="flip-digit-span" id="card-h2">0</span></div>
     </div>
     <div class="flip-colon">:</div>
     <div class="flip-unit">
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-m1" min="0" max="5" value="0">
-        <span class="flip-digit-span" id="card-m1">0</span>
-      </div>
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-m2" min="0" max="9" value="0">
-        <span class="flip-digit-span" id="card-m2">0</span>
-      </div>
+      <div class="flip-card" id="fscard-2"><span class="flip-digit-span" id="card-m1">0</span></div>
+      <div class="flip-card" id="fscard-3"><span class="flip-digit-span" id="card-m2">0</span></div>
     </div>
     <div class="flip-colon">:</div>
     <div class="flip-unit">
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-s1" min="0" max="5" value="0">
-        <span class="flip-digit-span" id="card-s1">0</span>
-      </div>
-      <div class="flip-card">
-        <input type="number" class="fs-native-input" id="fs-digit-s2" min="0" max="9" value="0">
-        <span class="flip-digit-span" id="card-s2">0</span>
-      </div>
+      <div class="flip-card" id="fscard-4"><span class="flip-digit-span" id="card-s1">0</span></div>
+      <div class="flip-card" id="fscard-5"><span class="flip-digit-span" id="card-s2">0</span></div>
     </div>
   </div>
 
@@ -965,7 +1006,7 @@ function sanitizeInput(str) {
 }
 
 // ==========================================
-// 🔊 CONTINUOUS RINGTONE ALARM SYNTHESIZER (SUPER LOUD DOUBLE OSCILLATOR)
+// 🔊 CONTINUOUS RINGTONE ALARM SYNTHESIZER (LOUDER DOUBLE OSCILLATOR)
 // ==========================================
 let audioCtx = null;
 let alarmInterval = null;
@@ -1086,10 +1127,10 @@ document.addEventListener('visibilitychange', async () => {
   }
 });
 
-// Re-lock if browser window regains focus (e.g. closing a notification on mobile)
+// Extra robust fallback: Re-lock when returning to browser window
 window.addEventListener('focus', async () => {
   const modal = document.getElementById('fullscreen-timer-modal');
-  if (modal.classList.contains('active')) {
+  if (wakeLock === null && modal.classList.contains('active')) {
     await requestWakeLock();
   }
 });
@@ -1139,16 +1180,6 @@ const fsAlarmStopBtn = document.getElementById('btn-fs-alarm-stop');
 const inHrs = document.getElementById('in-hrs');
 const inMins = document.getElementById('in-mins');
 const inSecs = document.getElementById('in-secs');
-
-// Fullscreen Direct Digit Inputs
-const fsH1 = document.getElementById('fs-digit-h1');
-const fsH2 = document.getElementById('fs-digit-h2');
-const fsM1 = document.getElementById('fs-digit-m1');
-const fsM2 = document.getElementById('fs-digit-m2');
-const fsS1 = document.getElementById('fs-digit-s1');
-const fsS2 = document.getElementById('fs-digit-s2');
-
-const fsDigitInputs = [fsH1, fsH2, fsM1, fsM2, fsS1, fsS2];
 
 const timerHeaderTitle = document.getElementById('timer-header-title');
 
@@ -1202,10 +1233,6 @@ function syncAllTimerDisplays(forceNoAnim = false) {
   // Sync Fullscreen Digit Cards
   const formattedAll = `${strH}${strM}${strS}`;
 
-  fsDigitInputs.forEach((inp, idx) => {
-    if (document.activeElement !== inp) inp.value = formattedAll[idx];
-  });
-
   updateFlipDigitSpan('card-h1', formattedAll[0], forceNoAnim);
   updateFlipDigitSpan('card-h2', formattedAll[1], forceNoAnim);
   updateFlipDigitSpan('card-m1', formattedAll[2], forceNoAnim);
@@ -1216,7 +1243,7 @@ function syncAllTimerDisplays(forceNoAnim = false) {
 
 function updateInputsStyleState(running) {
   const boxes = [document.getElementById('box-hrs'), document.getElementById('box-mins'), document.getElementById('box-secs')];
-  const inputs = [inHrs, inMins, inSecs, ...fsDigitInputs];
+  const inputs = [inHrs, inMins, inSecs];
 
   inputs.forEach(inp => inp.disabled = running);
 
@@ -1408,55 +1435,99 @@ homepageInputs.forEach((inp, idx) => {
   });
 });
 
-// Direct Keyboard Input Handling directly on Fullscreen Digit Cards
-fsDigitInputs.forEach((fsInp, idx) => {
-  fsInp.addEventListener('focus', function() {
-    this.select();
+// Fullscreen Edit Overlay Trigger on Card Click & Auto-Select Values
+const fsEditOverlay = document.getElementById('fs-edit-overlay');
+const fsEditHrs = document.getElementById('fs-edit-hrs');
+const fsEditMins = document.getElementById('fs-edit-mins');
+const fsEditSecs = document.getElementById('fs-edit-secs');
+
+const fsEditInputsGroup = [fsEditHrs, fsEditMins, fsEditSecs];
+
+fsEditInputsGroup.forEach((inp, idx) => {
+  inp.addEventListener('focus', function() {
+    this.select(); // Auto-selects 00 on click so you can type immediately!
   });
 
-  fsInp.addEventListener('input', function() {
-    if (!isTimerRunning && !isAlarmRinging) {
-      let val = this.value.replace(/\D/g, '');
-      if (val.length > 1) val = val.slice(-1);
-      this.value = val;
+  inp.addEventListener('input', function() {
+    let val = this.value.replace(/\D/g, '');
+    if (val.length > 2) val = val.slice(-2);
+    this.value = val;
 
-      const max = parseInt(this.max, 10);
-      if (!isNaN(max) && parseInt(val, 10) > max) {
-        this.value = max;
-      }
-
-      let digits = fsDigitInputs.map(inp => inp.value || '0');
-      const h = parseInt(digits[0] + digits[1], 10) || 0;
-      const m = parseInt(digits[2] + digits[3], 10) || 0;
-      const s = parseInt(digits[4] + digits[5], 10) || 0;
-
-      inHrs.value = pad2(h);
-      inMins.value = pad2(m);
-      inSecs.value = pad2(s);
-
-      globalTimeRemaining = getInputsTotalSeconds();
-      savedInitialSeconds = globalTimeRemaining;
-      syncAllTimerDisplays(true);
-
-      // Auto focus next input on digit entry
-      if (this.value !== '' && idx < fsDigitInputs.length - 1) {
-        fsDigitInputs[idx + 1].focus();
-      }
+    // Auto Advance Focus in Fullscreen Custom Set Box
+    if (val.length >= 2 && idx < fsEditInputsGroup.length - 1) {
+      fsEditInputsGroup[idx + 1].focus();
+      fsEditInputsGroup[idx + 1].select();
     }
   });
 
-  fsInp.addEventListener('keydown', function(e) {
+  inp.addEventListener('keydown', function(e) {
     if (e.key === 'Backspace' && this.value === '' && idx > 0) {
-      fsDigitInputs[idx - 1].focus();
+      fsEditInputsGroup[idx - 1].focus();
+      fsEditInputsGroup[idx - 1].select();
+    }
+    // Allow enter to save
+    if (e.key === 'Enter') {
+      document.getElementById('btn-save-fs-edit').click();
     }
   });
 });
 
+// Launch clean modal when clicking any card in fullscreen mode
+[0, 1, 2, 3, 4, 5].forEach(cardIdx => {
+  const cardElem = document.getElementById(`fscard-${cardIdx}`);
+  if (cardElem) {
+    cardElem.addEventListener('click', () => {
+      if (!isTimerRunning && !isAlarmRinging) {
+        // Populate current values
+        fsEditHrs.value = pad2(parseInt(inHrs.value) || 0);
+        fsEditMins.value = pad2(parseInt(inMins.value) || 0);
+        fsEditSecs.value = pad2(parseInt(inSecs.value) || 0);
+        
+        fsEditOverlay.classList.add('active');
+        
+        // Auto-focus and select hours input
+        setTimeout(() => {
+          fsEditHrs.focus();
+          fsEditHrs.select();
+        }, 50);
+      }
+    });
+  }
+});
+
+document.getElementById('btn-save-fs-edit').addEventListener('click', () => {
+  let h = parseInt(fsEditHrs.value, 10) || 0;
+  let m = parseInt(fsEditMins.value, 10) || 0;
+  let s = parseInt(fsEditSecs.value, 10) || 0;
+
+  if (h > 23) h = 23;
+  if (m > 59) m = 59;
+  if (s > 59) s = 59;
+
+  inHrs.value = pad2(h);
+  inMins.value = pad2(m);
+  inSecs.value = pad2(s);
+
+  globalTimeRemaining = getInputsTotalSeconds();
+  savedInitialSeconds = globalTimeRemaining;
+  syncAllTimerDisplays(true);
+
+  fsEditOverlay.classList.remove('active');
+  showCustomMessage('Custom duration saved!', 'success');
+});
+
+document.getElementById('btn-cancel-fs-edit').addEventListener('click', () => {
+  fsEditOverlay.classList.remove('active');
+});
+
 // KEYBOARD SHORTCUT: SPACE / ENTER TO START / PAUSE
 document.addEventListener('keydown', (e) => {
+  // If the edit overlay is open, ignore main shortcuts
+  if (fsEditOverlay.classList.contains('active')) return;
+
   if (e.key === 'Enter' || e.key === ' ') {
     if (['TEXTAREA', 'INPUT'].includes(document.activeElement.tagName) && 
-        !['in-hrs', 'in-mins', 'in-secs', ...fsDigitInputs.map(i=>i.id)].includes(document.activeElement.id)) {
+        !['in-hrs', 'in-mins', 'in-secs'].includes(document.activeElement.id)) {
       return;
     }
     
@@ -1734,7 +1805,7 @@ function executeSecureExport() {
   const securePackage = {
     metadata: { 
       timestamp: new Date().toISOString(), 
-      version: "4.9", 
+      version: "5.2", 
       integrity_signature: generateAntiTamperSignature(payloadString) 
     },
     payload: payload
