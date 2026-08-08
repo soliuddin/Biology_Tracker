@@ -1470,7 +1470,7 @@ document.addEventListener('keydown', (e) => {
 // Launch Fullscreen & Trigger 4-Second Orientation Hint
 let tiltHintTimeout = null;
 
-function showTiltHintFor4Seconds() {
+function showTiltHintFor8Seconds() {
   const hintBanner = document.getElementById('fs-tilt-hint');
   if (!hintBanner) return;
 
@@ -1495,7 +1495,7 @@ document.getElementById('btn-open-fullscreen-timer').addEventListener('click', (
     fsModal.classList.add('active');
     document.documentElement.classList.add('no-scroll');
     document.body.classList.add('no-scroll');
-    showTiltHintFor4Seconds();
+    showTiltHintFor8Seconds();
   });
 
   showCustomMessage('Entered ULTRA Focus Mode. Browser & Taskbar Hidden.', 'info');
