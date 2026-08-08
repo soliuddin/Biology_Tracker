@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biology NCERT Master Tracker</title>
-<meta name="description" content="A highly secure, beautiful, biology-themed NCERT Master Tracker.">
+<meta name="description" content="A highly secure, beautiful, biology-themed NCERT Master Tracker with customizable focus timer and screen wake lock.">
 
-<!-- 🧬 Biology SVG Favicon (Offline & CSP Compliant) -->
+<!-- 🧬 Biology SVG Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23064e3b' stroke='%2334d399' stroke-width='4'/><path d='M30,30 C45,45 55,55 70,70 M30,70 C45,55 55,45 70,30' stroke='%2334d399' stroke-width='6' stroke-linecap='round'/><circle cx='30' cy='30' r='6' fill='%2310b981'/><circle cx='70' cy='30' r='6' fill='%233b82f6'/><circle cx='30' cy='70' r='6' fill='%233b82f6'/><circle cx='70' cy='70' r='6' fill='%2310b981'/><line x1='38' y1='38' x2='62' y2='38' stroke='%23f8fafc' stroke-width='3'/><line x1='38' y1='62' x2='62' y2='62' stroke='%23f8fafc' stroke-width='3'/></svg>">
 
-<!-- 🛡️ PROTOCOL 4: Content Security Policy (CSP Firewall) -->
+<!-- 🛡️ PROTOCOL 4: CSP Firewall -->
 <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none';">
 
 <!-- Modern Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 
 <style>
 /* Biology & Modern CSS Variables */
@@ -32,6 +32,7 @@
 --danger: #ef4444;
 --radius: 20px;
 --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+--digit-color: #38bdf8;
 }
 
 * {
@@ -41,7 +42,12 @@ padding: 0;
 font-family: 'Poppins', sans-serif;
 }
 
-/* Ambient Biology Background (Floating Cells) */
+/* Scrollbar Lock class applied when fullscreen overlay is open */
+html.no-scroll, body.no-scroll {
+overflow: hidden !important;
+height: 100% !important;
+}
+
 body {
 background: var(--bg-gradient);
 color: var(--text-main);
@@ -79,12 +85,13 @@ z-index: 1;
 /* Header */
 header {
 text-align: center;
-margin-bottom: 40px;
+margin-bottom: 30px;
 padding-top: 20px;
+position: relative;
 }
 
 h1 {
-font-size: clamp(2rem, 5vw, 3.2rem);
+font-size: clamp(1.8rem, 5vw, 3.2rem);
 font-weight: 800;
 background: linear-gradient(to right, #6ee7b7, #3b82f6);
 -webkit-background-clip: text;
@@ -93,7 +100,7 @@ letter-spacing: -1px;
 margin-bottom: 5px;
 }
 
-.subtitle { font-size: 1.1rem; color: var(--bio-accent); font-weight: 300; }
+.subtitle { font-size: clamp(0.9rem, 2.5vw, 1.1rem); color: var(--bio-accent); font-weight: 300; }
 
 /* Glassmorphism Cards */
 .glass-card {
@@ -109,17 +116,17 @@ overflow: hidden;
 
 /* Info Section */
 .info-card {
-padding: 30px;
+padding: clamp(18px, 3vw, 30px);
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-gap: 25px;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 20px;
 }
 
 .input-group { display: flex; flex-direction: column; gap: 8px; }
 
 label { font-weight: 600; color: var(--bio-accent); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
 
-input[type="text"], textarea {
+input[type="text"], input[type="number"], textarea {
 width: 100%;
 padding: 12px 18px;
 background: rgba(0, 0, 0, 0.2);
@@ -131,21 +138,29 @@ transition: all 0.3s;
 outline: none;
 }
 
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
 border-color: var(--bio-accent);
-box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
 background: rgba(0, 0, 0, 0.4);
 }
 
 textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
 
-/* Hybrid Date Control (Manual Typing + Calendar Picker) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Hybrid Date Control */
 .hybrid-date-wrapper {
 position: relative;
 display: flex;
 align-items: center;
 width: 100%;
-min-width: 170px;
+min-width: 150px;
 }
 
 .hybrid-date-wrapper input[type="text"] {
@@ -176,26 +191,121 @@ transition: transform 0.2s;
 transform: scale(1.15);
 }
 
+/* Target Timer Panel - Centered Stacked Header & Under Controls Layout */
+.timer-panel {
+padding: clamp(18px, 3vw, 25px) clamp(18px, 3vw, 30px);
+background: rgba(6, 78, 59, 0.2);
+border-bottom: 1px solid var(--glass-border);
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+.timer-title-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 4px;
+text-align: center;
+}
+
+.timer-title-group h3 {
+font-size: clamp(1.1rem, 3vw, 1.35rem);
+font-weight: 700;
+color: var(--bio-accent);
+transition: all 0.4s ease;
+}
+
+.timer-controls-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 15px;
+width: 100%;
+padding-top: 15px;
+border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.timer-inputs-group {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.timer-buttons-group {
+display: flex;
+align-items: center;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+/* Clean Single Input Box */
+.single-timer-box {
+width: clamp(60px, 12vw, 78px);
+height: 48px;
+background: rgba(0, 0, 0, 0.3);
+border: 1px solid var(--glass-border);
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: border-color 0.3s ease;
+overflow: hidden;
+}
+
+.single-timer-box.running {
+border-color: var(--bio-accent);
+}
+
+.single-timer-box input {
+width: 100%;
+height: 100%;
+background: transparent;
+border: none;
+text-align: center;
+font-family: 'JetBrains Mono', monospace;
+font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+font-weight: 800;
+color: var(--bio-accent);
+outline: none;
+cursor: text;
+padding: 0;
+margin: 0;
+transition: color 0.3s ease;
+}
+
+.digit-flip {
+animation: textDigitFlip 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes textDigitFlip {
+0% { transform: rotateX(0deg); opacity: 1; }
+50% { transform: rotateX(-90deg); opacity: 0.3; }
+100% { transform: rotateX(0deg); opacity: 1; }
+}
+
 /* Unit Sections */
 .unit-header {
-padding: 20px 30px;
+padding: 18px 24px;
 background: rgba(0, 0, 0, 0.3);
 border-bottom: 1px solid var(--glass-border);
 display: flex;
 align-items: center;
-gap: 15px;
+gap: 12px;
 }
 
-.unit-icon { font-size: 1.8rem; }
-.unit-title { font-size: 1.3rem; font-weight: 600; color: #f8fafc; }
+.unit-icon { font-size: 1.6rem; }
+.unit-title { font-size: clamp(1.05rem, 2.5vw, 1.3rem); font-weight: 600; color: #f8fafc; }
 
-.table-responsive { overflow-x: auto; padding: 10px; }
+.table-responsive { overflow-x: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
 
 table { width: 100%; border-collapse: separate; border-spacing: 0 8px; white-space: nowrap; }
 
-th, td { padding: 16px 20px; text-align: center; }
+th, td { padding: 14px 16px; text-align: center; }
 
-th { font-weight: 600; color: var(--bio-accent); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; padding-bottom: 10px; }
+th { font-weight: 600; color: var(--bio-accent); text-transform: uppercase; font-size: 0.82rem; letter-spacing: 1px; padding-bottom: 8px; }
 
 td { background: rgba(255,255,255,0.03); border-top: 1px solid transparent; border-bottom: 1px solid transparent; }
 td:first-child { border-radius: 12px 0 0 12px; border-left: 1px solid transparent; }
@@ -203,11 +313,11 @@ td:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid transparen
 
 tr:hover td { background: rgba(255,255,255,0.06); border-color: var(--glass-border); }
 
-td.chapter-name { text-align: left; font-weight: 400; font-size: 1.05rem; white-space: normal; min-width: 250px; }
+td.chapter-name { text-align: left; font-weight: 400; font-size: 1rem; white-space: normal; min-width: 220px; }
 
 /* Modern Checkboxes */
 input[type="checkbox"] {
-appearance: none; width: 28px; height: 28px;
+appearance: none; width: 26px; height: 26px;
 border: 2px solid var(--text-muted); border-radius: 50%;
 background-color: rgba(0,0,0,0.2); cursor: pointer;
 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -215,8 +325,227 @@ display: inline-flex; align-items: center; justify-content: center; position: re
 }
 
 input[type="checkbox"]:hover { border-color: var(--bio-accent); transform: scale(1.1); }
-input[type="checkbox"]:checked { background-color: var(--success); border-color: var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
-input[type="checkbox"]:checked::after { content: '✓'; color: #022c22; font-size: 16px; font-weight: 800; position: absolute; }
+input[type="checkbox"]:checked { background-color: var(--success); border-color: var(--success); }
+input[type="checkbox"]:checked::after { content: '✓'; color: #022c22; font-size: 15px; font-weight: 800; position: absolute; }
+
+/* Buttons */
+.btn {
+padding: 10px 18px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.92rem; letter-spacing: 0.5px;
+white-space: nowrap;
+}
+
+.btn-primary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+.btn-primary:hover { transform: translateY(-2px); }
+
+.btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); }
+.btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+.btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+.btn-warning:hover { transform: translateY(-2px); }
+
+.btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+.btn-danger:hover { transform: translateY(-2px); }
+
+.btn-alarm {
+background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+color: white;
+animation: alarmPulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes alarmPulse {
+0% { transform: scale(1); }
+100% { transform: scale(1.08); }
+}
+
+.btn-export { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+.btn-export:hover { transform: translateY(-3px); }
+.btn-import { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+.btn-import:hover { transform: translateY(-3px); }
+
+.file-input-hidden { display: none; }
+
+/* 🌌 DARK DEEP SLATE FULLSCREEN FOCUS OVERLAY */
+.fullscreen-timer-overlay {
+position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+background: radial-gradient(circle at 50% 40%, #0f172a 0%, #090d16 60%, #030712 100%);
+color: #f8fafc;
+z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+padding: 15px;
+overflow: hidden !important;
+}
+
+.fullscreen-timer-overlay.active { opacity: 1; pointer-events: auto; }
+
+.fs-content-deck {
+position: relative;
+z-index: 10;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+max-width: 1100px;
+}
+
+/* 🌟 BEAUTIFUL PILL HEADER BADGE */
+.fs-pill-badge {
+font-size: clamp(0.85rem, 2vw, 1.1rem);
+font-weight: 800;
+color: #38bdf8;
+letter-spacing: 3px;
+text-transform: uppercase;
+margin-bottom: 12px;
+text-align: center;
+background: rgba(15, 23, 42, 0.75);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+padding: 10px 28px;
+border-radius: 50px;
+border: 1px solid rgba(56, 189, 248, 0.35);
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.15);
+display: inline-flex;
+align-items: center;
+gap: 10px;
+}
+
+.fs-urgency-banner {
+font-size: clamp(0.8rem, 2vw, 0.95rem);
+font-weight: 600;
+color: #34d399;
+letter-spacing: 1px;
+margin-bottom: 20px;
+text-align: center;
+background: rgba(15, 23, 42, 0.6);
+padding: 6px 18px;
+border-radius: 30px;
+border: 1px solid rgba(56, 189, 248, 0.15);
+}
+
+/* Dark Slate Glass Cockpit Display Frame */
+.flip-clock-container {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: clamp(6px, 1.5vw, 20px);
+padding: clamp(15px, 3vw, 25px) clamp(18px, 4vw, 35px);
+background: rgba(15, 23, 42, 0.65);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-radius: 28px;
+border: 1px solid rgba(56, 189, 248, 0.25);
+box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+margin: 5px 0 25px 0;
+perspective: 1000px;
+width: 100%;
+max-width: 850px;
+}
+
+.flip-unit {
+display: flex;
+gap: clamp(4px, 1vw, 8px);
+}
+
+.flip-card {
+position: relative;
+width: clamp(48px, 11vw, 115px);
+height: clamp(72px, 16vw, 155px);
+background: #0b1329;
+border-radius: 14px;
+border: 1px solid rgba(255, 255, 255, 0.12);
+box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+cursor: pointer;
+transition: all 0.25s ease;
+}
+
+.flip-card:hover {
+transform: translateY(-3px);
+border-color: #38bdf8;
+}
+
+/* Crisp Cyan Electric Digit Text */
+.flip-digit-span {
+display: inline-block;
+font-family: 'JetBrains Mono', monospace;
+font-size: clamp(2.5rem, 9vw, 8rem);
+font-weight: 800;
+color: #38bdf8;
+user-select: none;
+backface-visibility: hidden;
+}
+
+.flip-digit-span.page-turn {
+animation: fsDigitTextFlip 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fsDigitTextFlip {
+0% { transform: rotateX(0deg); opacity: 1; }
+50% { transform: rotateX(-90deg); opacity: 0.2; }
+100% { transform: rotateX(0deg); opacity: 1; }
+}
+
+.flip-colon {
+font-family: 'JetBrains Mono', monospace;
+font-size: clamp(2rem, 7vw, 6rem);
+font-weight: 800;
+color: #38bdf8;
+opacity: 0.75;
+margin: 0 1px;
+}
+
+.fs-preset-btns {
+display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 25px;
+}
+
+.fs-preset-btns button {
+padding: 8px 18px;
+background: rgba(255, 255, 255, 0.06);
+border: 1px solid rgba(255, 255, 255, 0.15);
+color: #f8fafc;
+border-radius: 30px;
+cursor: pointer;
+font-weight: 600;
+font-size: clamp(0.8rem, 2vw, 0.95rem);
+transition: all 0.25s ease;
+}
+
+.fs-preset-btns button:hover {
+background: #38bdf8;
+color: #030712;
+border-color: #38bdf8;
+}
+
+.fs-controls-group {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+justify-content: center;
+width: 100%;
+}
+
+.fs-controls-group .btn {
+font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+padding: 12px 24px;
+border-radius: 14px;
+box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+
+.btn-fullscreen-exit {
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid var(--glass-border);
+color: white;
+}
+
+.btn-fullscreen-exit:hover {
+background: #ef4444;
+border-color: #ef4444;
+color: white;
+}
 
 /* Footer & Action Bar */
 .footer-section { margin-top: 50px; margin-bottom: 40px; }
@@ -224,21 +553,9 @@ input[type="checkbox"]:checked::after { content: '✓'; color: #022c22; font-siz
 .action-bar-text h3 { color: var(--bio-accent); margin-bottom: 5px; display: flex; align-items: center; gap: 8px;}
 .action-bar-text p { font-size: 0.95rem; color: var(--text-muted); max-width: 500px;}
 
-.btn {
-padding: 14px 28px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
-transition: all 0.3s; display: flex; align-items: center; gap: 10px; font-size: 1rem; letter-spacing: 0.5px;
-}
-
-.btn-export { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-.btn-export:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(16,185,129,0.5); }
-.btn-import { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
-.btn-import:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(59,130,246,0.5); }
-
-.file-input-hidden { display: none; }
-
-/* Modals (Security & Activity Log) */
+/* Modals & Activity Log */
 .modal-overlay {
-position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
 z-index: 10000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -248,16 +565,13 @@ z-index: 10000; display: flex; justify-content: center; align-items: center; opa
 .modal-title { font-size: 1.4rem; font-weight: 600; color: #f8fafc; margin-bottom: 10px; }
 .modal-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
 .modal-buttons { display: flex; gap: 15px; justify-content: center; }
-.btn-cancel { background: rgba(255,255,255,0.1); color: white; }
-.btn-confirm { background: var(--danger); color: white; }
 
-/* Activity Log Specific Styles */
 .floating-log-btn {
 position: fixed; bottom: 25px; right: 25px; background: var(--bio-dark); border: 2px solid var(--bio-accent);
 color: white; padding: 12px 20px; border-radius: 30px; cursor: pointer; z-index: 9998;
 box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; font-weight: 600; transition: all 0.3s;
 }
-.floating-log-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52, 211, 153, 0.4); }
+.floating-log-btn:hover { transform: translateY(-3px); }
 .log-content-area {
 max-height: 300px; overflow-y: auto; text-align: left; background: rgba(0,0,0,0.3);
 padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--glass-border);
@@ -266,24 +580,93 @@ padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(-
 .log-entry:last-child { border-bottom: none; }
 .log-time { color: var(--bio-accent); font-size: 0.8rem; white-space: nowrap; font-family: monospace; }
 
+/* Dark Glass Edit Overlay */
+.fs-edit-overlay {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(9, 13, 22, 0.93);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+z-index: 100;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 18px;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease;
+border-radius: 28px;
+padding: 15px;
+}
+.fs-edit-overlay.active { opacity: 1; pointer-events: auto; }
+
+.fs-edit-box-row {
+display: flex;
+gap: 12px;
+align-items: center;
+}
+.fs-edit-input {
+width: clamp(55px, 15vw, 75px);
+height: clamp(44px, 10vw, 52px);
+background: #0b1329;
+border: 1.5px solid #38bdf8;
+border-radius: 12px;
+color: #38bdf8;
+font-family: 'JetBrains Mono', monospace;
+font-size: clamp(1.1rem, 3vw, 1.5rem);
+font-weight: 800;
+text-align: center;
+outline: none;
+}
+.fs-edit-input::selection {
+background: rgba(56, 189, 248, 0.3);
+color: #38bdf8;
+}
+
 /* Toasts */
 .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
 .custom-message-box {
-background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 16px 32px; border-radius: 50px;
-border: 1px solid var(--glass-border); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.5); font-weight: 600; font-size: 1rem;
-display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateY(-20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 28px; border-radius: 50px;
+border: 1px solid var(--glass-border); font-weight: 600; font-size: 0.95rem;
+display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(-20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .custom-message-box.show { opacity: 1; transform: translateY(0); }
 .custom-message-box.success { border-left: 4px solid var(--success); }
 .custom-message-box.error { border-left: 4px solid var(--danger); background: rgba(127, 29, 29, 0.95); }
 
-@media (max-width: 768px) {
-th, td { padding: 12px 10px; }
-.action-bar { flex-direction: column; align-items: flex-start; }
-.btn { width: 100%; justify-content: center; }
-.toast-container { width: 95%; }
-.custom-message-box { padding: 12px 20px; font-size: 0.9rem; justify-content: center; text-align: center;}
-.floating-log-btn { bottom: 15px; right: 15px; padding: 10px 16px; font-size: 0.9rem; }
+/* 📱 FLUID RESPONSIVE DESIGN FOR TABLETS & SMARTPHONES */
+@media (max-width: 900px) {
+body { padding: 12px; }
+.info-card { grid-template-columns: 1fr; }
+.timer-controls-row { flex-direction: column; justify-content: center; gap: 15px; }
+.timer-inputs-group { justify-content: center; width: 100%; }
+.timer-buttons-group { justify-content: center; width: 100%; }
+.timer-buttons-group .btn { flex: 1 1 auto; min-width: 130px; }
+}
+
+@media (max-width: 600px) {
+body { padding: 8px; }
+header { margin-bottom: 20px; }
+.timer-panel { padding: 18px 15px; }
+.glass-card { margin-bottom: 18px; border-radius: 16px; }
+.action-bar { flex-direction: column; align-items: stretch; text-align: center; }
+.action-bar button { width: 100%; }
+.fs-controls-group { flex-direction: column; width: 100%; max-width: 320px; }
+.fs-controls-group .btn { width: 100%; }
+.floating-log-btn { bottom: 15px; right: 15px; padding: 10px 16px; font-size: 0.85rem; }
+}
+
+/* 📱 Dynamic Landscape Scaling (Phones/Tablets Rotated Sideways) */
+@media (max-height: 500px) and (orientation: landscape) {
+.fs-pill-badge { margin-bottom: 5px; padding: 4px 18px; font-size: 0.75rem; }
+.fs-urgency-banner { margin-bottom: 10px; padding: 4px 15px; font-size: 0.8rem; }
+.flip-clock-container { padding: 10px 20px; gap: 8px; margin: 5px 0 15px 0; }
+.flip-card { height: 60px; width: 45px; border-radius: 8px; }
+.flip-digit-span { font-size: 2.5rem; }
+.fs-edit-input { height: 40px; width: 50px; font-size: 1.2rem; }
+.fs-preset-btns { margin-bottom: 10px; }
+.fs-preset-btns button { padding: 6px 12px; font-size: 0.8rem; }
+.fs-controls-group .btn { padding: 8px 16px; font-size: 0.9rem; }
 }
 </style>
 </head>
@@ -294,6 +677,32 @@ th, td { padding: 12px 10px; }
 <h1>BIOLOGY MASTER TRACKER</h1>
 <p class="subtitle">Securely master the NCERT syllabus, cell by cell.</p>
 </header>
+
+<!-- TARGETED SET TIMER CONTROL CARD -->
+<section class="glass-card timer-panel">
+<div class="timer-title-group">
+<h3 id="timer-header-title">⏳ Targeted Study Set Timer</h3>
+<p style="font-size: 0.88rem; color: var(--text-muted);">Set target time for your active chapter study session.</p>
+</div>
+
+<div class="timer-controls-row">
+  <div class="timer-inputs-group">
+    <div class="single-timer-box" id="box-hrs"><input type="number" id="in-hrs" min="0" max="23" value="00"></div>
+    <span style="font-weight: 700; color: var(--bio-accent);">:</span>
+    <div class="single-timer-box" id="box-mins"><input type="number" id="in-mins" min="0" max="59" value="00"></div>
+    <span style="font-weight: 700; color: var(--bio-accent);">:</span>
+    <div class="single-timer-box" id="box-secs"><input type="number" id="in-secs" min="0" max="59" value="00"></div>
+  </div>
+
+  <div class="timer-buttons-group">
+    <button class="btn btn-primary" id="btn-start-target-timer">▶️ Start Set</button>
+    <button class="btn btn-warning" id="btn-pause-target-timer" style="display: none;">⏸️ Pause</button>
+    <button class="btn btn-danger" id="btn-reset-target-timer">⏹️ Stop / Reset</button>
+    <button class="btn btn-alarm" id="btn-alarm-stop-target" style="display: none;">🔔 Stop Ringtone</button>
+    <button class="btn btn-secondary" id="btn-open-fullscreen-timer" title="Launch Fullscreen Focus Mode">📺 Fullscreen</button>
+  </div>
+</div>
+</section>
 
 <section class="glass-card info-card">
 <div class="input-group"><label for="student-name">Student Name</label><input type="text" id="student-name" placeholder="Enter your full name"></div>
@@ -349,7 +758,7 @@ th, td { padding: 12px 10px; }
 
 <!-- UNIT 3 -->
 <section class="glass-card">
-<div class="unit-header"><div class="unit-icon">🦠</div><div><h2 class="unit-title">UNIT 3: Cell : Structure and Function</h2></div></div>
+<div class="unit-header"><div class="unit-icon">🦠</div><div><h2 class="unit-title">UNIT 3 : Cell: Structure and Function</h2></div></div>
 <div class="table-responsive">
 <table>
 <thead><tr><th>Status</th><th>Ch.</th><th>Chapter Name</th><th>Date Completed</th><th>Rev 1</th><th>Rev 2</th></tr></thead>
@@ -411,6 +820,65 @@ th, td { padding: 12px 10px; }
 </footer>
 </main>
 
+<!-- ULTRA-MODERN FULL-SCREEN STUDY TIMER OVERLAY -->
+<div id="fullscreen-timer-modal" class="fullscreen-timer-overlay">
+
+<!-- Inline Edit Modal Overlay for Direct Card Click Editing -->
+<div class="fs-edit-overlay" id="fs-edit-overlay">
+  <div style="font-weight: 700; color: #38bdf8; letter-spacing: 1px;">⚙️ SET TARGET DURATION</div>
+  <div class="fs-edit-box-row">
+    <input type="number" class="fs-edit-input" id="fs-edit-hrs" min="0" max="23" value="00" placeholder="HH">
+    <span style="font-weight: 800; color: #f8fafc; font-size: 1.2rem;">:</span>
+    <input type="number" class="fs-edit-input" id="fs-edit-mins" min="0" max="59" value="00" placeholder="MM">
+    <span style="font-weight: 800; color: #f8fafc; font-size: 1.2rem;">:</span>
+    <input type="number" class="fs-edit-input" id="fs-edit-secs" min="0" max="59" value="00" placeholder="SS">
+  </div>
+  <div style="display: flex; gap: 10px; margin-top: 5px;">
+    <button class="btn btn-primary" id="btn-save-fs-edit">Apply Target</button>
+    <button class="btn btn-secondary" id="btn-cancel-fs-edit" style="color: #f8fafc; border-color: rgba(255,255,255,0.2);">Cancel</button>
+  </div>
+</div>
+
+<div class="fs-content-deck">
+  <!-- BEAUTIFUL PILL HEADER BADGE -->
+  <div class="fs-pill-badge">🧠 ULTRA FOCUS MODE</div>
+
+  <!-- Fullscreen Digit Display Cards (CLEAN MATTE CARDS) -->
+  <div class="flip-clock-container" id="fs-flip-clock">
+    <div class="flip-unit">
+      <div class="flip-card" id="fscard-0"><span class="flip-digit-span" id="card-h1">0</span></div>
+      <div class="flip-card" id="fscard-1"><span class="flip-digit-span" id="card-h2">0</span></div>
+    </div>
+    <div class="flip-colon">:</div>
+    <div class="flip-unit">
+      <div class="flip-card" id="fscard-2"><span class="flip-digit-span" id="card-m1">0</span></div>
+      <div class="flip-card" id="fscard-3"><span class="flip-digit-span" id="card-m2">0</span></div>
+    </div>
+    <div class="flip-colon">:</div>
+    <div class="flip-unit">
+      <div class="flip-card" id="fscard-4"><span class="flip-digit-span" id="card-s1">0</span></div>
+      <div class="flip-card" id="fscard-5"><span class="flip-digit-span" id="card-s2">0</span></div>
+    </div>
+  </div>
+
+  <div class="fs-preset-btns">
+  <button onclick="setTimerPreset(0, 15, 0)">15 Min Sprint</button>
+  <button onclick="setTimerPreset(0, 25, 0)">25 Min Pomodoro</button>
+  <button onclick="setTimerPreset(0, 45, 0)">45 Min Deep Session</button>
+  <button onclick="setTimerPreset(1, 0, 0)">1 Hr Full Test</button>
+  </div>
+
+  <!-- STREAMLINED VIBRANT CONTROL BUTTONS -->
+  <div class="fs-controls-group">
+  <button class="btn btn-primary" id="btn-fs-toggle">▶️ Start Session</button>
+  <button class="btn btn-warning" id="btn-fs-pause" style="display: none;">⏸️ Pause Session</button>
+  <button class="btn btn-danger" id="btn-fs-stop">⏹️ Stop / Reset</button>
+  <button class="btn btn-alarm" id="btn-fs-alarm-stop" style="display: none;">🔔 Stop Ringtone</button>
+  <button class="btn btn-fullscreen-exit" id="btn-fs-close">🚪 Exit Fullscreen</button>
+  </div>
+</div>
+</div>
+
 <!-- Floating Activity Log Button -->
 <button id="btn-activity-log" class="floating-log-btn">🔔 Activity Log</button>
 
@@ -424,8 +892,8 @@ th, td { padding: 12px 10px; }
 <h3 class="modal-title" id="modal-title">Security Alert</h3>
 <p class="modal-text" id="modal-desc">Message here</p>
 <div class="modal-buttons">
-<button class="btn btn-cancel" id="btn-cancel-modal">Cancel</button>
-<button class="btn btn-confirm" id="modal-confirm-btn">Confirm Action</button>
+<button class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+<button class="btn btn-danger" id="modal-confirm-btn">Confirm Action</button>
 </div>
 </div>
 </div>
@@ -435,19 +903,19 @@ th, td { padding: 12px 10px; }
 <div class="security-modal" style="max-width: 550px;">
 <h3 class="modal-title">📋 Activity History</h3>
 <p class="modal-text" style="margin-bottom: 15px;">Your recent actions and security alerts are securely logged below.</p>
-
-<div id="log-content" class="log-content-area">
-<!-- Log entries injected here via JS -->
-</div>
-
+<div id="log-content" class="log-content-area"></div>
 <div class="modal-buttons">
-<button class="btn btn-cancel" id="btn-close-log">Close Window</button>
-<button class="btn btn-cancel" id="btn-clear-log" style="color: var(--danger);">Clear Logs</button>
+<button class="btn btn-secondary" id="btn-close-log">Close Window</button>
+<button class="btn btn-secondary" id="btn-clear-log" style="color: var(--danger);">Clear Logs</button>
 </div>
 </div>
 </div>
 
 <script>
+function pad2(num) {
+  return String(num).padStart(2, '0');
+}
+
 // ==========================================
 // 🛡️ PROTOCOL 3: TOTAL XSS PROTECTION & SANITIZATION
 // ==========================================
@@ -463,7 +931,569 @@ function sanitizeInput(str) {
 }
 
 // ==========================================
-// 🗓️ HYBRID DATE SYSTEM (Manual Type Mask + Calendar Integration)
+// 🔊 CONTINUOUS RINGTONE ALARM SYNTHESIZER (LOUDER DOUBLE OSCILLATOR)
+// ==========================================
+let audioCtx = null;
+let alarmInterval = null;
+let isAlarmRinging = false;
+
+function playModernBoostRingtone() {
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
+    const now = audioCtx.currentTime;
+    const notes = [880.00, 1046.50, 1318.51, 1567.98, 2093.00];
+    
+    notes.forEach((freq, idx) => {
+      // Oscillator 1: Square for harsh/loud edge
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'square';
+      osc1.frequency.setValueAtTime(freq, now + (idx * 0.12));
+      gain1.gain.setValueAtTime(0, now + (idx * 0.12));
+      gain1.gain.linearRampToValueAtTime(0.4, now + (idx * 0.12) + 0.03); 
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.12) + 0.4);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now + (idx * 0.12));
+      osc1.stop(now + (idx * 0.12) + 0.45);
+
+      // Oscillator 2: Triangle for body
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(freq / 2, now + (idx * 0.12)); 
+      gain2.gain.setValueAtTime(0, now + (idx * 0.12));
+      gain2.gain.linearRampToValueAtTime(0.6, now + (idx * 0.12) + 0.03); 
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.12) + 0.4);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start(now + (idx * 0.12));
+      osc2.stop(now + (idx * 0.12) + 0.45);
+    });
+  } catch (e) {
+    console.warn('Audio Synthesis Error:', e);
+  }
+}
+
+function startAlarmRingtone() {
+  if (isAlarmRinging) return;
+  isAlarmRinging = true;
+
+  playModernBoostRingtone();
+  alarmInterval = setInterval(playModernBoostRingtone, 1100);
+
+  document.getElementById('btn-start-target-timer').style.display = 'none';
+  document.getElementById('btn-pause-target-timer').style.display = 'none';
+  document.getElementById('btn-alarm-stop-target').style.display = 'inline-flex';
+
+  document.getElementById('btn-fs-toggle').style.display = 'none';
+  document.getElementById('btn-fs-pause').style.display = 'none';
+  document.getElementById('btn-fs-alarm-stop').style.display = 'inline-flex';
+}
+
+function stopAlarmRingtone() {
+  if (!isAlarmRinging) return;
+  clearInterval(alarmInterval);
+  alarmInterval = null;
+  isAlarmRinging = false;
+
+  document.getElementById('btn-alarm-stop-target').style.display = 'none';
+  document.getElementById('btn-start-target-timer').style.display = 'inline-flex';
+  document.getElementById('btn-start-target-timer').innerText = '▶️ Start Set';
+
+  document.getElementById('btn-fs-alarm-stop').style.display = 'none';
+  document.getElementById('btn-fs-toggle').style.display = 'inline-flex';
+  document.getElementById('btn-fs-toggle').innerText = '▶️ Start Session';
+  document.getElementById('btn-fs-pause').style.display = 'none';
+
+  globalTimeRemaining = savedInitialSeconds > 0 ? savedInitialSeconds : getInputsTotalSeconds();
+  syncAllTimerDisplays(true);
+
+  showCustomMessage('Ringtone alarm stopped.', 'info');
+}
+
+// ==========================================
+// 💻 SCREEN WAKE LOCK SYSTEM
+// ==========================================
+let wakeLock = null;
+
+async function requestWakeLock() {
+  if ('wakeLock' in navigator) {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+    } catch (err) {
+      console.warn(`Wake Lock Error: ${err.name}, ${err.message}`);
+    }
+  }
+}
+
+function releaseWakeLock() {
+  if (wakeLock !== null) {
+    wakeLock.release().then(() => {
+      wakeLock = null;
+    });
+  }
+}
+
+document.addEventListener('visibilitychange', async () => {
+  const modal = document.getElementById('fullscreen-timer-modal');
+  if (wakeLock !== null && document.visibilityState === 'visible' && modal.classList.contains('active')) {
+    await requestWakeLock();
+  }
+});
+
+// Extra robust fallback: Re-lock when returning to browser window
+window.addEventListener('focus', async () => {
+  const modal = document.getElementById('fullscreen-timer-modal');
+  if (wakeLock === null && modal.classList.contains('active')) {
+    await requestWakeLock();
+  }
+});
+
+// Native Browser Fullscreen Request / Exit Functions
+function enterTrueFullscreen() {
+  const element = document.documentElement;
+  if (element.requestFullscreen) {
+    element.requestFullscreen().catch(err => console.warn("Fullscreen request denied: ", err));
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+}
+
+function exitTrueFullscreen() {
+  if (document.exitFullscreen) {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(err => console.warn("Fullscreen exit error: ", err));
+    }
+  } else if (document.webkitExitFullscreen) {
+    if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+  }
+}
+
+// ==========================================
+// ⏱️ UNIFIED MASTER TIMER CONTROLLER
+// ==========================================
+let globalTimerInterval = null;
+let globalTimeRemaining = 0;
+let isTimerRunning = false;
+let savedInitialSeconds = 0;
+
+const startTargetBtn = document.getElementById('btn-start-target-timer');
+const pauseTargetBtn = document.getElementById('btn-pause-target-timer');
+const resetTargetBtn = document.getElementById('btn-reset-target-timer');
+const stopAlarmBtn = document.getElementById('btn-alarm-stop-target');
+
+const fsModal = document.getElementById('fullscreen-timer-modal');
+const fsToggleBtn = document.getElementById('btn-fs-toggle');
+const fsPauseBtn = document.getElementById('btn-fs-pause');
+const fsStopBtn = document.getElementById('btn-fs-stop');
+const fsAlarmStopBtn = document.getElementById('btn-fs-alarm-stop');
+
+// Homepage Inputs
+const inHrs = document.getElementById('in-hrs');
+const inMins = document.getElementById('in-mins');
+const inSecs = document.getElementById('in-secs');
+
+function getInputsTotalSeconds() {
+  const h = parseInt(inHrs.value, 10) || 0;
+  const m = parseInt(inMins.value, 10) || 0;
+  const s = parseInt(inSecs.value, 10) || 0;
+  return (h * 3600) + (m * 60) + s;
+}
+
+function updateInputBoxWithTextFlip(inputElem, newStrVal, forceNoAnim = false) {
+  if (inputElem.value !== newStrVal) {
+    if (!forceNoAnim) {
+      inputElem.classList.remove('digit-flip');
+      void inputElem.offsetWidth;
+      inputElem.classList.add('digit-flip');
+    }
+    inputElem.value = newStrVal;
+  }
+}
+
+// Fullscreen Text-Only Digit Flip
+function updateFlipDigitSpan(spanId, newDigit, forceNoAnim = false) {
+  const span = document.getElementById(spanId);
+  if (!span) return;
+
+  if (span.innerText !== newDigit) {
+    if (!forceNoAnim) {
+      span.classList.remove('page-turn');
+      void span.offsetWidth; // Force CSS reflow
+      span.classList.add('page-turn');
+    }
+    span.innerText = newDigit;
+  }
+}
+
+function syncAllTimerDisplays(forceNoAnim = false) {
+  const h = Math.floor(globalTimeRemaining / 3600);
+  const m = Math.floor((globalTimeRemaining % 3600) / 60);
+  const s = globalTimeRemaining % 60;
+
+  const strH = pad2(h);
+  const strM = pad2(m);
+  const strS = pad2(s);
+
+  // Sync Homepage Inputs
+  updateInputBoxWithTextFlip(inHrs, strH, forceNoAnim);
+  updateInputBoxWithTextFlip(inMins, strM, forceNoAnim);
+  updateInputBoxWithTextFlip(inSecs, strS, forceNoAnim);
+
+  // Sync Fullscreen Digit Cards
+  const formattedAll = `${strH}${strM}${strS}`;
+
+  updateFlipDigitSpan('card-h1', formattedAll[0], forceNoAnim);
+  updateFlipDigitSpan('card-h2', formattedAll[1], forceNoAnim);
+  updateFlipDigitSpan('card-m1', formattedAll[2], forceNoAnim);
+  updateFlipDigitSpan('card-m2', formattedAll[3], forceNoAnim);
+  updateFlipDigitSpan('card-s1', formattedAll[4], forceNoAnim);
+  updateFlipDigitSpan('card-s2', formattedAll[5], forceNoAnim);
+}
+
+function updateInputsStyleState(running) {
+  const boxes = [document.getElementById('box-hrs'), document.getElementById('box-mins'), document.getElementById('box-secs')];
+  const inputs = [inHrs, inMins, inSecs];
+
+  inputs.forEach(inp => inp.disabled = running);
+
+  boxes.forEach(b => {
+    if (running) {
+      b.classList.add('running');
+    } else {
+      b.classList.remove('running');
+    }
+  });
+}
+
+function startGlobalTimer() {
+  if (isAlarmRinging) {
+    stopAlarmRingtone();
+  }
+
+  if (isTimerRunning) return;
+
+  if (globalTimeRemaining <= 0) {
+    globalTimeRemaining = getInputsTotalSeconds();
+  }
+
+  if (globalTimeRemaining <= 0) {
+    showCustomMessage('Please enter a duration greater than 0 seconds.', 'error');
+    return;
+  }
+
+  if (savedInitialSeconds <= 0 || globalTimeRemaining === getInputsTotalSeconds()) {
+    savedInitialSeconds = globalTimeRemaining;
+  }
+
+  isTimerRunning = true;
+  updateInputsStyleState(true);
+
+  // Button State Updates
+  startTargetBtn.style.display = 'none';
+  pauseTargetBtn.style.display = 'inline-flex';
+  stopAlarmBtn.style.display = 'none';
+
+  fsToggleBtn.style.display = 'none';
+  fsPauseBtn.style.display = 'inline-flex';
+  fsAlarmStopBtn.style.display = 'none';
+
+  showCustomMessage('Study timer started!', 'info');
+
+  clearInterval(globalTimerInterval);
+  globalTimerInterval = setInterval(() => {
+    globalTimeRemaining--;
+    syncAllTimerDisplays();
+
+    if (globalTimeRemaining <= 0) {
+      stopGlobalTimer(true);
+    }
+  }, 1000);
+}
+
+function pauseGlobalTimer() {
+  clearInterval(globalTimerInterval);
+  isTimerRunning = false;
+  updateInputsStyleState(false);
+
+  startTargetBtn.style.display = 'inline-flex';
+  startTargetBtn.innerText = '▶️ Resume Set';
+  pauseTargetBtn.style.display = 'none';
+
+  fsToggleBtn.style.display = 'inline-flex';
+  fsToggleBtn.innerText = '▶️ Resume Session';
+  fsPauseBtn.style.display = 'none';
+
+  showCustomMessage('Timer paused at current time.', 'info');
+}
+
+function stopGlobalTimer(isCompleted = false) {
+  clearInterval(globalTimerInterval);
+  isTimerRunning = false;
+
+  if (isCompleted) {
+    updateInputsStyleState(false);
+    globalTimeRemaining = 0;
+    syncAllTimerDisplays(true);
+    startAlarmRingtone();
+    showCustomMessage('🎯 Targeted Study Session Completed! Press Stop Ringtone to turn off alarm.', 'success');
+  } else {
+    resetGlobalTimer();
+  }
+}
+
+// FIXED: Always Reset Back To Saved Target Duration
+function resetGlobalTimer() {
+  clearInterval(globalTimerInterval);
+  isTimerRunning = false;
+  if (isAlarmRinging) {
+    stopAlarmRingtone();
+  }
+
+  updateInputsStyleState(false);
+
+  startTargetBtn.style.display = 'inline-flex';
+  startTargetBtn.innerText = '▶️ Start Set';
+  pauseTargetBtn.style.display = 'none';
+  stopAlarmBtn.style.display = 'none';
+
+  fsToggleBtn.style.display = 'inline-flex';
+  fsToggleBtn.innerText = '▶️ Start Session';
+  fsPauseBtn.style.display = 'none';
+  fsAlarmStopBtn.style.display = 'none';
+
+  globalTimeRemaining = savedInitialSeconds > 0 ? savedInitialSeconds : getInputsTotalSeconds();
+  syncAllTimerDisplays(true);
+  showCustomMessage('Timer reset to target time.', 'info');
+}
+
+function setTimerPreset(h, m, s) {
+  resetGlobalTimer();
+  inHrs.value = pad2(h);
+  inMins.value = pad2(m);
+  inSecs.value = pad2(s);
+
+  globalTimeRemaining = (h * 3600) + (m * 60) + s;
+  savedInitialSeconds = globalTimeRemaining;
+  syncAllTimerDisplays(true);
+}
+
+// Event Listeners for Timer Actions
+startTargetBtn.addEventListener('click', startGlobalTimer);
+pauseTargetBtn.addEventListener('click', pauseGlobalTimer);
+resetTargetBtn.addEventListener('click', resetGlobalTimer);
+stopAlarmBtn.addEventListener('click', stopAlarmRingtone);
+
+fsToggleBtn.addEventListener('click', startGlobalTimer);
+fsPauseBtn.addEventListener('click', pauseGlobalTimer);
+fsStopBtn.addEventListener('click', resetGlobalTimer);
+fsAlarmStopBtn.addEventListener('click', stopAlarmRingtone);
+
+// AUTO-ADVANCE & AUTO-SELECT FOR HOMEPAGE INPUTS
+const homepageInputs = [inHrs, inMins, inSecs];
+
+homepageInputs.forEach((inp, idx) => {
+  inp.addEventListener('focus', function() { this.select(); });
+
+  inp.addEventListener('blur', function() {
+    let val = parseInt(this.value, 10);
+    if (isNaN(val) || val < 0) val = 0;
+    const max = parseInt(this.max, 10);
+    if (!isNaN(max) && val > max) val = max;
+    this.value = pad2(val);
+
+    if (!isTimerRunning && !isAlarmRinging) {
+      globalTimeRemaining = getInputsTotalSeconds();
+      savedInitialSeconds = globalTimeRemaining;
+      startTargetBtn.innerText = '▶️ Start Set';
+      fsToggleBtn.innerText = '▶️ Start Session';
+      syncAllTimerDisplays(true);
+    }
+  });
+
+  inp.addEventListener('input', function() {
+    if (!isTimerRunning && !isAlarmRinging) {
+      let val = this.value.replace(/\D/g, '');
+      if (val.length > 2) val = val.slice(-2);
+      this.value = val;
+
+      globalTimeRemaining = getInputsTotalSeconds();
+      savedInitialSeconds = globalTimeRemaining;
+      startTargetBtn.innerText = '▶️ Start Set';
+      fsToggleBtn.innerText = '▶️ Start Session';
+      syncAllTimerDisplays(true);
+
+      // Auto Advance to Next Input Box
+      if (val.length >= 2 && idx < homepageInputs.length - 1) {
+        homepageInputs[idx + 1].focus();
+        homepageInputs[idx + 1].select();
+      }
+    }
+  });
+
+  inp.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && this.value === '' && idx > 0) {
+      homepageInputs[idx - 1].focus();
+      homepageInputs[idx - 1].select();
+    }
+  });
+});
+
+// Fullscreen Edit Overlay Trigger on Card Click & Auto-Select Values
+const fsEditOverlay = document.getElementById('fs-edit-overlay');
+const fsEditHrs = document.getElementById('fs-edit-hrs');
+const fsEditMins = document.getElementById('fs-edit-mins');
+const fsEditSecs = document.getElementById('fs-edit-secs');
+
+const fsEditInputsGroup = [fsEditHrs, fsEditMins, fsEditSecs];
+
+fsEditInputsGroup.forEach((inp, idx) => {
+  inp.addEventListener('focus', function() {
+    this.select(); // Auto-selects 00 on click so you can type immediately!
+  });
+
+  inp.addEventListener('input', function() {
+    let val = this.value.replace(/\D/g, '');
+    if (val.length > 2) val = val.slice(-2);
+    this.value = val;
+
+    // Auto Advance Focus in Fullscreen Custom Set Box
+    if (val.length >= 2 && idx < fsEditInputsGroup.length - 1) {
+      fsEditInputsGroup[idx + 1].focus();
+      fsEditInputsGroup[idx + 1].select();
+    }
+  });
+
+  inp.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && this.value === '' && idx > 0) {
+      fsEditInputsGroup[idx - 1].focus();
+      fsEditInputsGroup[idx - 1].select();
+    }
+  });
+});
+
+[0, 1, 2, 3, 4, 5].forEach(cardIdx => {
+  const cardElem = document.getElementById(`fscard-${cardIdx}`);
+  if (cardElem) {
+    cardElem.addEventListener('click', () => {
+      if (!isTimerRunning && !isAlarmRinging) {
+        fsEditHrs.value = inHrs.value;
+        fsEditMins.value = inMins.value;
+        fsEditSecs.value = inSecs.value;
+        fsEditOverlay.classList.add('active');
+        
+        // Auto-focus and select hours input
+        setTimeout(() => {
+          fsEditHrs.focus();
+          fsEditHrs.select();
+        }, 50);
+      }
+    });
+  }
+});
+
+document.getElementById('btn-save-fs-edit').addEventListener('click', () => {
+  let h = parseInt(fsEditHrs.value, 10) || 0;
+  let m = parseInt(fsEditMins.value, 10) || 0;
+  let s = parseInt(fsEditSecs.value, 10) || 0;
+
+  if (h > 23) h = 23;
+  if (m > 59) m = 59;
+  if (s > 59) s = 59;
+
+  inHrs.value = pad2(h);
+  inMins.value = pad2(m);
+  inSecs.value = pad2(s);
+
+  globalTimeRemaining = getInputsTotalSeconds();
+  savedInitialSeconds = globalTimeRemaining;
+  syncAllTimerDisplays(true);
+
+  fsEditOverlay.classList.remove('active');
+  showCustomMessage('Custom duration saved!', 'success');
+});
+
+document.getElementById('btn-cancel-fs-edit').addEventListener('click', () => {
+  fsEditOverlay.classList.remove('active');
+});
+
+// KEYBOARD SHORTCUT: SPACE / ENTER TO START / PAUSE
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    if (['TEXTAREA', 'INPUT'].includes(document.activeElement.tagName) && 
+        !['in-hrs', 'in-mins', 'in-secs', 'fs-edit-hrs', 'fs-edit-mins', 'fs-edit-secs'].includes(document.activeElement.id)) {
+      return;
+    }
+    
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+      document.activeElement.blur(); // Remove focus to prevent re-clicking buttons
+    }
+
+    if (isTimerRunning) {
+      pauseGlobalTimer();
+    } else {
+      startGlobalTimer();
+    }
+  }
+});
+
+// Launch Fullscreen and Hide Browser / Taskbar / Lock Page Scroll
+document.getElementById('btn-open-fullscreen-timer').addEventListener('click', () => {
+  if (!isTimerRunning && globalTimeRemaining <= 0) {
+    globalTimeRemaining = getInputsTotalSeconds();
+  }
+  syncAllTimerDisplays(true);
+  fsModal.classList.add('active');
+  document.documentElement.classList.add('no-scroll');
+  document.body.classList.add('no-scroll');
+  enterTrueFullscreen();
+  requestWakeLock();
+  showCustomMessage('Entered ULTRA Focus Mode. Browser & Taskbar Hidden.', 'info');
+});
+
+// Close Fullscreen Overlay via Button
+document.getElementById('btn-fs-close').addEventListener('click', closeFullscreenOverlay);
+
+function closeFullscreenOverlay() {
+  fsModal.classList.remove('active');
+  document.documentElement.classList.remove('no-scroll');
+  document.body.classList.remove('no-scroll');
+  exitTrueFullscreen();
+  releaseWakeLock();
+}
+
+// ESC Key Listener / Sync with Fullscreen Exit
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    fsModal.classList.remove('active');
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
+    releaseWakeLock();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && fsModal.classList.contains('active')) {
+    closeFullscreenOverlay();
+  }
+});
+
+globalTimeRemaining = getInputsTotalSeconds();
+savedInitialSeconds = globalTimeRemaining;
+syncAllTimerDisplays(true);
+
+// ==========================================
+// 🗓️ HYBRID DATE SYSTEM
 // ==========================================
 function setupDateMasks() {
   document.querySelectorAll('.hybrid-date-wrapper').forEach(wrapper => {
@@ -472,7 +1502,6 @@ function setupDateMasks() {
 
     if (!textInput || !pickerInput) return;
 
-    // 1. Manual Typing Mask (DD/MM/YYYY)
     textInput.addEventListener('input', (e) => {
       let v = e.target.value.replace(/\D/g, '');
       if (v.length > 8) v = v.substring(0, 8);
@@ -484,25 +1513,19 @@ function setupDateMasks() {
         e.target.value = v;
       }
 
-      // Sync typing with native date picker if valid
       if (e.target.value.length === 10) {
         const parts = e.target.value.split('/');
-        const day = parts[0];
-        const month = parts[1];
-        const year = parts[2];
-        if (day <= 31 && month <= 12 && year.length === 4) {
-          pickerInput.value = `${year}-${month}-${day}`;
+        if (parts[0] <= 31 && parts[1] <= 12 && parts[2].length === 4) {
+          pickerInput.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
       }
     });
 
-    // 2. Calendar Picker Sync (YYYY-MM-DD -> DD/MM/YYYY)
     pickerInput.addEventListener('change', (e) => {
       if (!e.target.value) return;
-      const parts = e.target.value.split('-'); // ISO: YYYY-MM-DD
+      const parts = e.target.value.split('-');
       if (parts.length === 3) {
         textInput.value = `${parts[2]}/${parts[1]}/${parts[0]}`;
-        // Trigger manual input event to initiate LocalStorage auto-save
         textInput.dispatchEvent(new Event('input', { bubbles: true }));
       }
     });
@@ -523,9 +1546,8 @@ function generateAntiTamperSignature(dataString) {
 }
 
 // ==========================================
-// 2. UI COMPONENTS (Logs, Toasts & Modals)
+// 2. UI COMPONENTS
 // ==========================================
-
 function recordActivityLog(message, type) {
   let logs = JSON.parse(localStorage.getItem('bio_activity_logs') || '[]');
   const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
@@ -575,19 +1597,15 @@ function showCustomMessage(message, type = 'info') {
   }, 3000);
 }
 
-// Modal Control Logic
 const securityModal = document.getElementById('security-modal');
 const logModal = document.getElementById('log-modal');
 
 document.getElementById('btn-cancel-modal').addEventListener('click', () => securityModal.classList.remove('active'));
-
 document.getElementById('btn-activity-log').addEventListener('click', () => {
   renderActivityLogs();
   logModal.classList.add('active');
 });
-
 document.getElementById('btn-close-log').addEventListener('click', () => logModal.classList.remove('active'));
-
 document.getElementById('btn-clear-log').addEventListener('click', () => {
   localStorage.removeItem('bio_activity_logs');
   renderActivityLogs();
@@ -601,7 +1619,7 @@ function openSecurityModal(title, desc, icon, confirmAction, confirmText, isDang
 
   const btn = document.getElementById('modal-confirm-btn');
   btn.innerText = confirmText;
-  btn.style.background = isDanger ? 'var(--danger)' : 'var(--success)';
+  btn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
 
   const newBtn = btn.cloneNode(true);
   btn.parentNode.replaceChild(newBtn, btn);
@@ -615,7 +1633,7 @@ function openSecurityModal(title, desc, icon, confirmAction, confirmText, isDang
 }
 
 // ==========================================
-// 🛡️ PROTOCOL 5: 100% OFFLINE PRIVACY SANDBOX
+// 🛡️ LOCALSTORAGE BINDINGS & EXPORT/IMPORT
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   setupDateMasks();
@@ -624,11 +1642,10 @@ document.addEventListener('DOMContentLoaded', () => {
   try { localStorage.getItem('test'); } catch(e) { storageAvailable = false; }
 
   if (!storageAvailable) {
-    setTimeout(() => showCustomMessage('Warning: LocalStorage blocked by browser. Auto-save disabled.', 'error'), 1000);
+    setTimeout(() => showCustomMessage('Warning: LocalStorage blocked. Auto-save disabled.', 'error'), 1000);
     return;
   }
 
-  // Filter out internal calendar triggers from LocalStorage binding
   const allInputs = document.querySelectorAll('input:not([type="file"]):not(.native-calendar-btn), textarea');
   let textChangeTimeout;
 
@@ -639,7 +1656,6 @@ document.addEventListener('DOMContentLoaded', () => {
         input.checked = (savedValue === 'true');
       } else {
         input.value = savedValue;
-        // Sync date values to calendar pickers on initial load
         if (input.classList.contains('date-mask') && savedValue.length === 10) {
           const picker = input.parentElement.querySelector('.native-calendar-btn');
           if (picker) {
@@ -663,19 +1679,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Event Listeners for Export/Import
   document.getElementById('btn-export').addEventListener('click', triggerSecureExport);
   document.getElementById('btn-import').addEventListener('click', triggerSecureImport);
   document.getElementById('import-file').addEventListener('change', executeSecureImport);
 });
 
-// ==========================================
-// SECURE EXPORT ENGINE
-// ==========================================
 function triggerSecureExport() {
   openSecurityModal(
     "Secure Export Initialization",
-    "Your data will be exported with a Digital Signature. Any manual modifications to the downloaded file will break the signature and permanently block the import. Proceed?",
+    "Your data will be exported with a Digital Signature. Any manual modifications will break the signature and permanently block the import. Proceed?",
     "🔐", executeSecureExport, "Lock & Export", false
   );
 }
@@ -690,7 +1702,7 @@ function executeSecureExport() {
   const securePackage = {
     metadata: { 
       timestamp: new Date().toISOString(), 
-      version: "1.1", 
+      version: "4.8", 
       integrity_signature: generateAntiTamperSignature(payloadString) 
     },
     payload: payload
@@ -709,13 +1721,10 @@ function executeSecureExport() {
   showCustomMessage('Data Encapsulated & Exported Successfully!', 'success');
 }
 
-// ==========================================
-// 🛡️ PROTOCOL 2: STRICT SCHEMA VALIDATION & VERIFICATION
-// ==========================================
 function triggerSecureImport() {
   openSecurityModal(
     "Security Warning",
-    "Ensure this file was generated by YOU. If the file has been tampered with or contains injected code, the security system will instantly block it.",
+    "Ensure this file was generated by YOU. If the file has been tampered with or contains injected code, the security system will block it.",
     "🛑", () => document.getElementById('import-file').click(), "Verify & Import", true
   );
 }
@@ -729,19 +1738,16 @@ function executeSecureImport(event) {
     try {
       const importedData = JSON.parse(e.target.result);
 
-      // 1. Structure Verification
       if (!importedData.metadata || !importedData.payload || !importedData.metadata.integrity_signature) {
         throw new Error("Invalid Secure Package Format.");
       }
 
-      // 2. Anti-Tamper Signature Check
       const payloadString = JSON.stringify(importedData.payload);
       if (importedData.metadata.integrity_signature !== generateAntiTamperSignature(payloadString)) {
         showCustomMessage("Malicious Modification Detected! Import Blocked.", "error");
         return;
       }
 
-      // 3. Strict Whitelist Schema Validation
       const allowedKeys = Array.from(document.querySelectorAll('input:not([type="file"]):not(.native-calendar-btn), textarea')).map(i => i.id);
       const payloadKeys = Object.keys(importedData.payload);
 
@@ -751,7 +1757,6 @@ function executeSecureImport(event) {
         }
       }
 
-      // 4. Safe Insertion to LocalStorage
       for (const key of allowedKeys) {
         if (importedData.payload[key] !== undefined) {
           let safeValue = importedData.payload[key];
